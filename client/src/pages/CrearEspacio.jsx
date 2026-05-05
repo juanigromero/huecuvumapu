@@ -6,11 +6,22 @@ import SectionBar from '../components/ui/SectionBar';
 import { crearEspacio } from '../services/espaciosService';
 import styles from './CrearEntidad.module.css';
 
+async function geocodificar(direccion, ciudad) {
+  const query = encodeURIComponent(`${direccion}, ${ciudad}, Argentina`);
+  const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`, {
+    headers: { 'Accept-Language': 'es' },
+  });
+  const data = await res.json();
+  if (data.length === 0) return null;
+  return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+}
+
 export default function CrearEspacio() {
   const token = useSelector(s => s.auth.token);
   const navigate = useNavigate();
-  const [form, setForm] = useState({ nombre: '', handle: '', descripcion: '', direccion: '', ciudad: 'Bahía Blanca' });
+  const [form, setForm] = useState({ nombre: '', handle: '', descripcion: '', direccion: '', ciudad: 'Bahía Blanca', lat: null, lng: null });
   const [loading, setLoading] = useState(false);
+  const [geocodingStatus, setGeocodingStatus] = useState(null); // null | 'buscando' | 'ok' | 'no_encontrado'
   const [error, setError] = useState(null);
 
   function handleChange(e) {
@@ -23,6 +34,18 @@ export default function CrearEspacio() {
       nombre: e.target.value,
       handle: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
     }));
+  }
+
+  async function handleDireccionBlur() {
+    if (!form.direccion.trim()) return;
+    setGeocodingStatus('buscando');
+    const coords = await geocodificar(form.direccion, form.ciudad);
+    if (coords) {
+      setForm(f => ({ ...f, lat: coords.lat, lng: coords.lng }));
+      setGeocodingStatus('ok');
+    } else {
+      setGeocodingStatus('no_encontrado');
+    }
   }
 
   async function handleSubmit(e) {
@@ -67,7 +90,17 @@ export default function CrearEspacio() {
             </div>
             <div className={styles.field}>
               <label className={styles.label}>Dirección</label>
-              <input className={styles.input} name="direccion" value={form.direccion} onChange={handleChange} placeholder="Av. Colón 123" />
+              <input
+                className={styles.input}
+                name="direccion"
+                value={form.direccion}
+                onChange={e => { handleChange(e); setGeocodingStatus(null); setForm(f => ({ ...f, lat: null, lng: null, direccion: e.target.value })); }}
+                onBlur={handleDireccionBlur}
+                placeholder="Av. Colón 123"
+              />
+              {geocodingStatus === 'buscando' && <span className={styles.hint}>Buscando ubicación...</span>}
+              {geocodingStatus === 'ok' && <span className={styles.hintOk}>✓ Ubicación encontrada — va a aparecer en el mapa</span>}
+              {geocodingStatus === 'no_encontrado' && <span className={styles.hintWarn}>No se encontró la dirección. Podés guardar igual, pero no aparecerá en el mapa.</span>}
             </div>
           </div>
 
