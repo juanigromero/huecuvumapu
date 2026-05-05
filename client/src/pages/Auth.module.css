@@ -1,0 +1,124 @@
+.page {
+  min-height: 100vh;
+  background: #f5f0e8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  border: 2px solid #111;
+  background: #f5f0e8;
+  padding: 2.5rem;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.logo {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #999;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #111;
+}
+
+.input {
+  background: #fff;
+  border: 1.5px solid #111;
+  padding: 0.65rem 0.85rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  color: #111;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input::placeholder {
+  color: #999;
+}
+
+.input:focus {
+  border-color: #111;
+  background: #fff;
+  box-shadow: 2px 2px 0 #111;
+}
+
+.error {
+  font-size: 13px;
+  color: #c00;
+  border: 1px solid #c00;
+  padding: 0.5rem 0.75rem;
+  margin: 0;
+}
+
+.btnPrimary {
+  background: #111;
+  color: #f5f0e8;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.85rem 1.5rem;
+  border: none;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background: #333;
+}
+
+.btnPrimary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.footer {
+  margin-top: 1.5rem;
+  font-size: 13px;
+  color: #555;
+  text-align: center;
+}
+
+.link {
+  color: #111;
+  font-weight: 700;
+  text-decoration: underline;
+}
