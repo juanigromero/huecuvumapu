@@ -54,10 +54,11 @@ export async function crear(body, usuarioId) {
     .from('eventos')
     .insert({
       titulo, descripcion, fecha, hora,
-      entrada, precio, imagen_url, link_externo,
+      entrada, precio: precio || null, imagen_url, link_externo,
       estado_publicacion, iniciador,
-      proyecto_id, proyecto_texto,
-      espacio_id, espacio_texto, lat, lng,
+      proyecto_id: proyecto_id || null, proyecto_texto: proyecto_texto || null,
+      espacio_id: espacio_id || null, espacio_texto: espacio_texto || null,
+      lat: lat || null, lng: lng || null,
     })
     .select()
     .single();
