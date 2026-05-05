@@ -1,0 +1,192 @@
+.page {
+  min-height: 100vh;
+  background: #f5f0e8;
+}
+
+.loading, .error {
+  padding: 3rem;
+  text-align: center;
+  font-size: 14px;
+  color: #999;
+}
+
+/* COVER */
+.cover {
+  position: relative;
+  min-height: 240px;
+  background: #222;
+  background-size: cover;
+  background-position: center;
+  border-bottom: 2px solid #111;
+  display: flex;
+  align-items: flex-end;
+}
+
+.coverOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 60%);
+}
+
+.coverContent {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border: 2px solid #fff;
+}
+
+.nombre {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.handle {
+  font-size: 12px;
+  color: rgba(255,255,255,0.7);
+  font-weight: 500;
+}
+
+.ciudad {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+}
+
+/* BODY */
+.body {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  min-height: 400px;
+}
+
+.main {
+  padding: 2rem;
+  border-right: 1.5px solid #111;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.bio {
+  font-size: 15px;
+  color: #333;
+  line-height: 1.6;
+  max-width: 600px;
+}
+
+.direccion {
+  font-size: 13px;
+  color: #555;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.verificado {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  background: #c8f0d8;
+  color: #0a2a14;
+  border: 1px solid #111;
+  align-self: flex-start;
+}
+
+.stats {
+  display: flex;
+  gap: 2rem;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.statNum {
+  font-size: 36px;
+  font-weight: 700;
+  color: #111;
+  line-height: 1;
+}
+
+.statLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #999;
+}
+
+/* SIDEBAR */
+.sidebar {
+  border-left: 1.5px solid #111;
+}
+
+.miembros {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.miembro {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.miembroAvatar {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border: 1px solid #111;
+}
+
+.miembroAvatarPlaceholder {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #111;
+  background: #e8e0d0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.miembroNombre {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111;
+}
+
+.miembroRol {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #999;
+}
+
+@media (max-width: 768px) {
+  .body { grid-template-columns: 1fr; }
+  .sidebar { border-left: none; border-top: 1.5px solid #111; }
+}

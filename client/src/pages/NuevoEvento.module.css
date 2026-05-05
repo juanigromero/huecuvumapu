@@ -1,0 +1,227 @@
+.page {
+  min-height: 100vh;
+  background: #f5f0e8;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.aviso {
+  border: 1.5px solid #111;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  font-size: 14px;
+  color: #555;
+  background: #fff8ee;
+}
+
+.aviso a {
+  color: #111;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.fieldset {
+  border: 1.5px solid #111;
+  padding: 1rem 1.25rem;
+  margin: 0;
+}
+
+.legend {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #111;
+  padding: 0 0.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #111;
+}
+
+.input, .select, .textarea {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  color: #111;
+  background: #fff;
+  border: 1.5px solid #111;
+  padding: 0.6rem 0.85rem;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input:focus, .select:focus, .textarea:focus {
+  box-shadow: 2px 2px 0 #111;
+}
+
+.input::placeholder, .textarea::placeholder {
+  color: #bbb;
+}
+
+.textarea {
+  resize: vertical;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.categorias {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.catBtn {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  padding: 0.4rem 1rem;
+  border: 1.5px solid #111;
+  background: transparent;
+  color: #111;
+  cursor: pointer;
+}
+
+.catBtnActivo {
+  background: #111;
+  color: #f5f0e8;
+}
+
+.buscador {
+  position: relative;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  border: 1.5px solid #111;
+  border-top: none;
+  background: #fff;
+  z-index: 10;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dropdownItem {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.6rem 0.85rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  color: #111;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.dropdownItem:hover {
+  background: #f5f0e8;
+}
+
+.hint {
+  font-size: 12px;
+  color: #999;
+  margin-top: 0.25rem;
+}
+
+.confirmado {
+  font-size: 12px;
+  color: #0a2a14;
+  background: #c8f0d8;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #111;
+  margin-top: 0.25rem;
+}
+
+.iniciadorOpciones, .entradaOpciones {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.iniciadorOpcion, .entradaOpcion {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  border: 1.5px solid #ccc;
+  padding: 0.4rem 0.9rem;
+}
+
+.iniciadorActivo, .entradaActiva {
+  border-color: #111;
+  color: #111;
+  background: #f0ebe0;
+}
+
+.iniciadorOpcion input, .entradaOpcion input {
+  display: none;
+}
+
+.error {
+  font-size: 13px;
+  color: #c00;
+  border: 1px solid #c00;
+  padding: 0.5rem 0.75rem;
+}
+
+.btnSubmit {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.9rem 2rem;
+  background: #111;
+  color: #f5f0e8;
+  border: none;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.btnSubmit:hover:not(:disabled) {
+  background: #333;
+}
+
+.btnSubmit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .row { grid-template-columns: 1fr; }
+}

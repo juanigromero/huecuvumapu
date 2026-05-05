@@ -1,0 +1,15 @@
+.tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  padding: 3px 10px;
+  border: 1px solid #111;
+}
+
+.musica  { background: #c8f0d8; color: #0a2a14; }
+.visual  { background: #f5d0e8; color: #4a0a2a; }
+.teatro  { background: #d0e8f5; color: #0a1a4a; }
+.popular { background: #f5e8d0; color: #4a2a0a; }
+.default { background: #e8e0d0; color: #111; }

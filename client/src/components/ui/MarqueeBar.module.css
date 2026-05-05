@@ -1,0 +1,33 @@
+.bar {
+  overflow: hidden;
+  background: #c8f0d8;
+  border-top: 1.5px solid #111;
+  border-bottom: 1.5px solid #111;
+  padding: 0.4rem 0;
+}
+
+.inner {
+  display: flex;
+  gap: 0;
+  white-space: nowrap;
+  animation: scroll 22s linear infinite;
+}
+
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.item {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #111;
+  padding: 0 1rem;
+}
+
+.sep {
+  margin-left: 1rem;
+  opacity: 0.4;
+}
