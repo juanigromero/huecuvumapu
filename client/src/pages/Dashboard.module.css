@@ -1,0 +1,276 @@
+.page {
+  min-height: 100vh;
+  background: #f5f0e8;
+}
+
+.loading {
+  padding: 3rem;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+  border-bottom: 1.5px solid #111;
+}
+
+.titulo {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111;
+}
+
+.subtitulo {
+  font-size: 13px;
+  color: #999;
+  margin-top: 0.2rem;
+}
+
+.btnNuevo {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: #111;
+  color: #f5f0e8;
+  padding: 0.65rem 1.25rem;
+  text-decoration: none;
+}
+
+.btnNuevo:hover { background: #333; }
+
+.body {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  min-height: calc(100vh - 130px);
+}
+
+.main {
+  border-right: 1.5px solid #111;
+}
+
+.sidebar {}
+
+.section {
+  border-bottom: 1.5px solid #111;
+}
+
+.sectionAction {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #c8f0d8;
+  text-decoration: none;
+}
+
+/* CONFIRMACIONES */
+.confirmaciones {
+  display: flex;
+  flex-direction: column;
+}
+
+.confirmacion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.confInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.confTitulo {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111;
+}
+
+.confFecha {
+  font-size: 11px;
+  color: #999;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.confDe {
+  font-size: 12px;
+  color: #777;
+}
+
+.confAcciones {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.btnConfirmar {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.8rem;
+  background: #c8f0d8;
+  color: #0a2a14;
+  border: 1px solid #111;
+  cursor: pointer;
+}
+
+.btnRechazar {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.8rem;
+  background: transparent;
+  color: #999;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.btnRechazar:hover { border-color: #111; color: #111; }
+
+/* EVENTOS */
+.eventosList {
+  display: flex;
+  flex-direction: column;
+}
+
+.eventoRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.5rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.eventoInfo {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.eventoFecha {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #999;
+  width: 64px;
+  flex-shrink: 0;
+}
+
+.eventoTitulo {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+}
+
+/* BADGES */
+.badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border: 1px solid;
+}
+
+.badgePublicado  { background: #c8f0d8; color: #0a2a14; border-color: #111; }
+.badgePendiente  { background: #f5e8d0; color: #4a2a0a; border-color: #ccc; }
+.badgeCancelado  { background: #f5d0d0; color: #4a0a0a; border-color: #ccc; }
+.badgePostergado { background: #d0e8f5; color: #0a1a4a; border-color: #ccc; }
+
+/* VACÍO */
+.vacio {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.vacio p {
+  font-size: 13px;
+  color: #999;
+}
+
+.btnVacio {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #111;
+  border: 1.5px solid #111;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  align-self: flex-start;
+}
+
+.btnVacio:hover { background: #111; color: #f5f0e8; }
+
+/* ENTIDADES SIDEBAR */
+.entidades {
+  display: flex;
+  flex-direction: column;
+}
+
+.entidad {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #ddd;
+  text-decoration: none;
+  color: #111;
+}
+
+.entidad:hover { background: #eee8d8; }
+
+.entidadAvatar {
+  width: 36px;
+  height: 36px;
+  background: #e8e0d0;
+  border: 1.5px solid #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #555;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.entidadNombre {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #111;
+}
+
+.entidadRol {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #999;
+}
+
+@media (max-width: 768px) {
+  .body { grid-template-columns: 1fr; }
+  .main { border-right: none; }
+}

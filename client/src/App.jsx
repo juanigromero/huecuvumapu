@@ -6,6 +6,8 @@ import Dashboard from './pages/Dashboard';
 import ProyectoPerfil from './pages/ProyectoPerfil';
 import EspacioPerfil from './pages/EspacioPerfil';
 import NuevoEvento from './pages/NuevoEvento';
+import CrearProyecto from './pages/CrearProyecto';
+import CrearEspacio from './pages/CrearEspacio';
 import ProtectedRoute from './components/ui/ProtectedRoute';
 
 export default function App() {
@@ -24,6 +26,14 @@ export default function App() {
         <Route
           path="/nuevo-evento"
           element={<ProtectedRoute><NuevoEvento /></ProtectedRoute>}
+        />
+        <Route
+          path="/crear-proyecto"
+          element={<ProtectedRoute><CrearProyecto /></ProtectedRoute>}
+        />
+        <Route
+          path="/crear-espacio"
+          element={<ProtectedRoute><CrearEspacio /></ProtectedRoute>}
         />
       </Routes>
     </BrowserRouter>
