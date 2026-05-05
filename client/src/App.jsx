@@ -8,6 +8,7 @@ import EspacioPerfil from './pages/EspacioPerfil';
 import NuevoEvento from './pages/NuevoEvento';
 import CrearProyecto from './pages/CrearProyecto';
 import CrearEspacio from './pages/CrearEspacio';
+import Mapa from './pages/Mapa';
 import ProtectedRoute from './components/ui/ProtectedRoute';
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/p/:handle" element={<ProyectoPerfil />} />
         <Route path="/e/:handle" element={<EspacioPerfil />} />
+        <Route path="/mapa" element={<Mapa />} />
         <Route
           path="/dashboard"
           element={<ProtectedRoute><Dashboard /></ProtectedRoute>}
