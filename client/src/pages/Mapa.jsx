@@ -54,14 +54,16 @@ function crearIcono(categorias, count) {
 function agruparPorUbicacion(eventos) {
   const grupos = {};
   eventos.forEach(e => {
-    if (!e.espacios?.lat || !e.espacios?.lng) return;
-    const key = `${e.espacios.lat},${e.espacios.lng}`;
+    const lat = e.espacios?.lat || e.lat;
+    const lng = e.espacios?.lng || e.lng;
+    if (!lat || !lng) return;
+    const key = `${lat},${lng}`;
     if (!grupos[key]) {
       grupos[key] = {
         key,
-        lat: e.espacios.lat,
-        lng: e.espacios.lng,
-        espacio: e.espacios,
+        lat,
+        lng,
+        espacio: e.espacios || { nombre: e.espacio_texto || 'Sin nombre', direccion: null },
         eventos: [],
       };
     }

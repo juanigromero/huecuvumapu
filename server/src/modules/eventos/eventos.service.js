@@ -32,7 +32,7 @@ export async function crear(body, usuarioId) {
     titulo, descripcion, fecha, hora,
     entrada, precio, imagen_url, link_externo,
     iniciador, proyecto_id, proyecto_texto,
-    espacio_id, espacio_texto, categorias = [],
+    espacio_id, espacio_texto, lat, lng, categorias = [],
   } = body;
 
   // Verificar que el usuario es miembro de la entidad iniciadora
@@ -57,7 +57,7 @@ export async function crear(body, usuarioId) {
       entrada, precio, imagen_url, link_externo,
       estado_publicacion, iniciador,
       proyecto_id, proyecto_texto,
-      espacio_id, espacio_texto,
+      espacio_id, espacio_texto, lat, lng,
     })
     .select()
     .single();

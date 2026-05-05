@@ -6,6 +6,7 @@ import SectionBar from '../components/ui/SectionBar';
 import { misProyectos } from '../services/proyectosService';
 import { misEspacios, buscarEspacios } from '../services/espaciosService';
 import { crearEvento } from '../services/eventosService';
+import { useNominatim } from '../hooks/useNominatim';
 import styles from './NuevoEvento.module.css';
 
 const CATEGORIAS = ['musica', 'visual', 'teatro', 'popular'];
@@ -20,18 +21,22 @@ export default function NuevoEvento() {
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState(null);
 
-  // Búsqueda de contraparte
-  const [busquedaEspacio, setBusquedaEspacio] = useState('');
-  const [resultadosEspacio, setResultadosEspacio] = useState([]);
-  const [espacioSeleccionado, setEspacioSeleccionado] = useState(null);
+  const [busqueda, setBusqueda] = useState('');
+  const [espaciosRegistrados, setEspaciosRegistrados] = useState([]);
+  const [seleccion, setSeleccion] = useState(null); // { tipo: 'registrado'|'lugar', ...datos }
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+
+  const { resultados: sugerenciasNominatim, buscando: buscandoNominatim } = useNominatim(
+    seleccion ? '' : busqueda
+  );
 
   const [form, setForm] = useState({
     titulo: '', descripcion: '', fecha: '', hora: '',
-    entrada: 'gratuita', precio: '',
-    link_externo: '',
+    entrada: 'gratuita', precio: '', link_externo: '',
     iniciador: 'proyecto',
     proyecto_id: '', proyecto_texto: '',
     espacio_id: '', espacio_texto: '',
+    lat: null, lng: null,
     categorias: [],
   });
 
@@ -42,43 +47,52 @@ export default function NuevoEvento() {
   }, [token]);
 
   useEffect(() => {
-    if (form.iniciador === 'proyecto' && proyectos.length > 0) {
+    if (form.iniciador === 'proyecto' && proyectos.length > 0)
       setForm(f => ({ ...f, proyecto_id: proyectos[0].id }));
-    }
-    if (form.iniciador === 'espacio' && espacios.length > 0) {
+    if (form.iniciador === 'espacio' && espacios.length > 0)
       setForm(f => ({ ...f, espacio_id: espacios[0].id }));
-    }
   }, [form.iniciador, proyectos, espacios]);
 
-  // Búsqueda de espacio contraparte (cuando iniciador = proyecto)
+  // Buscar en espacios registrados mientras se escribe
   useEffect(() => {
-    if (form.iniciador !== 'proyecto') return;
-    if (busquedaEspacio.length < 2) { setResultadosEspacio([]); return; }
-    const t = setTimeout(() => {
-      buscarEspacios(busquedaEspacio).then(setResultadosEspacio);
-    }, 300);
-    return () => clearTimeout(t);
-  }, [busquedaEspacio, form.iniciador]);
+    if (!busqueda || busqueda.length < 2 || seleccion) { setEspaciosRegistrados([]); return; }
+    buscarEspacios(busqueda).then(setEspaciosRegistrados);
+  }, [busqueda, seleccion]);
+
+  const hayResultados = espaciosRegistrados.length > 0 || sugerenciasNominatim.length > 0;
 
   function handleChange(e) {
-    const { name, value } = e.target;
-    setForm(f => ({ ...f, [name]: value }));
+    setForm(f => ({ ...f, [e.target.name]: e.target.value }));
   }
 
   function toggleCategoria(c) {
     setForm(f => ({
       ...f,
-      categorias: f.categorias.includes(c)
-        ? f.categorias.filter(x => x !== c)
-        : [...f.categorias, c],
+      categorias: f.categorias.includes(c) ? f.categorias.filter(x => x !== c) : [...f.categorias, c],
     }));
   }
 
-  function seleccionarEspacio(e) {
-    setEspacioSeleccionado(e);
-    setForm(f => ({ ...f, espacio_id: e.id, espacio_texto: '' }));
-    setBusquedaEspacio(e.nombre);
-    setResultadosEspacio([]);
+  function elegirEspacioRegistrado(esp) {
+    setSeleccion({ tipo: 'registrado', ...esp });
+    setBusqueda(esp.nombre);
+    setEspaciosRegistrados([]);
+    setForm(f => ({ ...f, espacio_id: esp.id, espacio_texto: '', lat: null, lng: null }));
+    setDropdownVisible(false);
+  }
+
+  function elegirLugarNominatim(lugar) {
+    setSeleccion({ tipo: 'lugar', ...lugar });
+    setBusqueda(lugar.nombre);
+    setEspaciosRegistrados([]);
+    setForm(f => ({ ...f, espacio_id: '', espacio_texto: lugar.nombre, lat: lugar.lat, lng: lugar.lng }));
+    setDropdownVisible(false);
+  }
+
+  function limpiarSeleccion() {
+    setSeleccion(null);
+    setBusqueda('');
+    setForm(f => ({ ...f, espacio_id: '', espacio_texto: '', lat: null, lng: null }));
+    setDropdownVisible(true);
   }
 
   async function handleSubmit(evt) {
@@ -89,8 +103,8 @@ export default function NuevoEvento() {
       const body = {
         ...form,
         precio: form.precio ? parseFloat(form.precio) : null,
-        espacio_id: espacioSeleccionado?.id || null,
-        espacio_texto: espacioSeleccionado ? '' : (form.iniciador === 'proyecto' ? busquedaEspacio : ''),
+        // Si no eligió nada del dropdown, guardar lo que escribió como texto
+        espacio_texto: form.espacio_id ? '' : (form.espacio_texto || busqueda),
       };
       await crearEvento(body, token);
       navigate('/dashboard');
@@ -109,7 +123,6 @@ export default function NuevoEvento() {
     <div className={styles.page}>
       <Nav />
       <SectionBar label="Nuevo evento" />
-
       <div className={styles.container}>
         {sinEntidades && (
           <div className={styles.aviso}>
@@ -136,7 +149,6 @@ export default function NuevoEvento() {
                 </label>
               )}
             </div>
-
             {form.iniciador === 'proyecto' && proyectos.length > 1 && (
               <select name="proyecto_id" value={form.proyecto_id} onChange={handleChange} className={styles.select}>
                 {proyectos.map(p => <option key={p.id} value={p.id}>{p.nombre}</option>)}
@@ -149,7 +161,7 @@ export default function NuevoEvento() {
             )}
           </fieldset>
 
-          {/* DATOS BÁSICOS */}
+          {/* TÍTULO Y FECHA */}
           <div className={styles.field}>
             <label className={styles.label}>Título del evento *</label>
             <input className={styles.input} name="titulo" value={form.titulo} onChange={handleChange} required placeholder="Nombre del evento" />
@@ -171,41 +183,74 @@ export default function NuevoEvento() {
             <label className={styles.label}>Categorías</label>
             <div className={styles.categorias}>
               {CATEGORIAS.map(c => (
-                <button
-                  key={c} type="button"
+                <button key={c} type="button"
                   className={`${styles.catBtn} ${form.categorias.includes(c) ? styles.catBtnActivo : ''}`}
-                  onClick={() => toggleCategoria(c)}
-                >{c}</button>
+                  onClick={() => toggleCategoria(c)}>{c}</button>
               ))}
             </div>
           </div>
 
-          {/* CONTRAPARTE */}
+          {/* ESPACIO — autocomplete combinado */}
           {form.iniciador === 'proyecto' && (
             <div className={styles.field}>
               <label className={styles.label}>Espacio donde se realiza</label>
-              <div className={styles.buscador}>
-                <input
-                  className={styles.input}
-                  placeholder="Buscar espacio por nombre..."
-                  value={busquedaEspacio}
-                  onChange={e => { setBusquedaEspacio(e.target.value); setEspacioSeleccionado(null); setForm(f => ({ ...f, espacio_id: '' })); }}
-                />
-                {resultadosEspacio.length > 0 && (
-                  <div className={styles.dropdown}>
-                    {resultadosEspacio.map(e => (
-                      <button key={e.id} type="button" className={styles.dropdownItem} onClick={() => seleccionarEspacio(e)}>
-                        <strong>{e.nombre}</strong>{e.ciudad ? ` · ${e.ciudad}` : ''}
-                      </button>
-                    ))}
+
+              {seleccion ? (
+                <div className={seleccion.tipo === 'registrado' ? styles.seleccionRegistrado : styles.seleccionLugar}>
+                  <div className={styles.seleccionInfo}>
+                    {seleccion.tipo === 'registrado' && <span className={styles.seleccionBadge}>en huecuvumapu</span>}
+                    {seleccion.tipo === 'lugar' && <span className={styles.seleccionBadgeLugar}>ubicación</span>}
+                    <strong className={styles.seleccionNombre}>{seleccion.nombre}</strong>
+                    {seleccion.tipo === 'lugar' && seleccion.direccion && (
+                      <span className={styles.seleccionDireccion}>{seleccion.direccion}</span>
+                    )}
+                    {seleccion.tipo === 'registrado' && (
+                      <span className={styles.seleccionHint}>recibirá una solicitud de confirmación</span>
+                    )}
                   </div>
-                )}
-              </div>
-              {!espacioSeleccionado && busquedaEspacio.length > 0 && (
-                <p className={styles.hint}>Si el espacio no está registrado, el nombre que escribas quedará guardado como texto.</p>
-              )}
-              {espacioSeleccionado && (
-                <p className={styles.confirmado}>✓ {espacioSeleccionado.nombre} — recibirá una solicitud de confirmación.</p>
+                  <button type="button" className={styles.seleccionCambiar} onClick={limpiarSeleccion}>cambiar</button>
+                </div>
+              ) : (
+                <div className={styles.buscador}>
+                  <input
+                    className={styles.input}
+                    placeholder="Escribí el nombre del lugar..."
+                    value={busqueda}
+                    onChange={e => { setBusqueda(e.target.value); setDropdownVisible(true); }}
+                    onFocus={() => busqueda.length >= 2 && setDropdownVisible(true)}
+                    autoComplete="off"
+                  />
+                  {buscandoNominatim && <span className={styles.buscandoIndicador}>buscando...</span>}
+
+                  {dropdownVisible && hayResultados && (
+                    <div className={styles.dropdown}>
+                      {espaciosRegistrados.length > 0 && (
+                        <>
+                          <div className={styles.dropdownSeccion}>en huecuvumapu</div>
+                          {espaciosRegistrados.map(e => (
+                            <button key={e.id} type="button" className={`${styles.dropdownItem} ${styles.dropdownItemRegistrado}`}
+                              onClick={() => elegirEspacioRegistrado(e)}>
+                              <strong>{e.nombre}</strong>
+                              {e.ciudad && <span> · {e.ciudad}</span>}
+                            </button>
+                          ))}
+                        </>
+                      )}
+                      {sugerenciasNominatim.length > 0 && (
+                        <>
+                          <div className={styles.dropdownSeccion}>lugares</div>
+                          {sugerenciasNominatim.map((l, i) => (
+                            <button key={i} type="button" className={styles.dropdownItem}
+                              onClick={() => elegirLugarNominatim(l)}>
+                              <strong>{l.nombre}</strong>
+                              {l.direccion && <span className={styles.dropdownDireccion}> · {l.direccion}</span>}
+                            </button>
+                          ))}
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           )}
