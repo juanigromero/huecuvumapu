@@ -83,7 +83,8 @@ export async function listar({ ciudad, categoria, fecha_desde, fecha_hasta, inic
       *,
       eventos_categorias(categoria),
       proyectos(id, nombre, handle, avatar_url),
-      espacios(id, nombre, handle, avatar_url, ciudad, lat, lng)
+      espacios(id, nombre, handle, avatar_url, ciudad, lat, lng),
+      confirmaciones(confirmador_tipo, estado)
     `)
     .eq('estado_publicacion', 'publicado')
     .order('fecha', { ascending: true });

@@ -72,6 +72,29 @@ function agruparPorUbicacion(eventos) {
   return Object.values(grupos);
 }
 
+function ConfirmacionBadge({ confirmaciones = [], iniciador }) {
+  // Busca la confirmación de la contraparte (si el evento lo cargó un proyecto, busca la del espacio y viceversa)
+  const contraparte = iniciador === 'proyecto' ? 'espacio' : 'proyecto';
+  const conf = confirmaciones.find(c => c.confirmador_tipo === contraparte);
+  if (!conf) return null; // sin espacio/proyecto registrado, no hay confirmación
+
+  const map = {
+    confirmado:  { texto: 'confirmado', color: '#0a2a14', bg: '#c8f0d8' },
+    pendiente:   { texto: 'a confirmar', color: '#4a2a0a', bg: '#f5e8d0' },
+    rechazado:   { texto: 'no confirmado', color: '#4a0a0a', bg: '#f5d0d0' },
+  };
+  const { texto, color, bg } = map[conf.estado] || map.pendiente;
+
+  return (
+    <span style={{
+      fontSize: '10px', fontWeight: 700, letterSpacing: '0.06em',
+      textTransform: 'uppercase', padding: '2px 6px',
+      background: bg, color, border: `1px solid ${color}`,
+      alignSelf: 'flex-start', marginTop: '2px',
+    }}>{texto}</span>
+  );
+}
+
 const CATEGORIAS = ['musica', 'visual', 'teatro', 'popular'];
 const BAHIA_CENTER = [-38.7196, -62.2724];
 
@@ -146,6 +169,7 @@ export default function Mapa() {
                           <Link key={e.id} to={`/eventos/${e.id}`} className={styles.popupEvento}>
                             <span className={styles.popupEventoFecha}>{formatFecha(e.fecha)}</span>
                             <span className={styles.popupEventoTitulo}>{e.titulo}</span>
+                            <ConfirmacionBadge confirmaciones={e.confirmaciones} iniciador={e.iniciador} />
                           </Link>
                         ))}
                       </div>
