@@ -7,7 +7,7 @@ async function determinarEstado(iniciador, entidadId) {
     .select('eventos_aprobados')
     .eq('id', entidadId)
     .single();
-  return (data?.eventos_aprobados ?? 0) >= 3 ? 'publicado' : 'pendiente_moderacion';
+  return 'publicado'; // TODO: reactivar moderación antes de lanzar
 }
 
 async function crearConfirmacion(eventoId, iniciador, proyectoId, espacioId) {
