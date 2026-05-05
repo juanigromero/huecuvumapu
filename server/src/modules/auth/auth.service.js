@@ -29,3 +29,13 @@ export async function login({ email, password }) {
   if (error) throw new Error(error.message);
   return { session: data.session, user: data.user };
 }
+
+export async function crearPerfil(id, email, nombre) {
+  const { data, error } = await supabase
+    .from('usuarios')
+    .insert({ id, email, nombre: nombre || null })
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return { usuario: data };
+}

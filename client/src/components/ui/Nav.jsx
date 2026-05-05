@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../store/authSlice';
+import { logoutSupabase } from '../../services/authService';
 import styles from './Nav.module.css';
 
 export default function Nav() {
@@ -8,8 +9,8 @@ export default function Nav() {
   const navigate = useNavigate();
   const user = useSelector((s) => s.auth.user);
 
-  function handleLogout() {
-    dispatch(logout());
+  async function handleLogout() {
+    await logoutSupabase(); // Supabase limpia la sesión → dispara onAuthStateChange → Redux se actualiza
     navigate('/');
   }
 

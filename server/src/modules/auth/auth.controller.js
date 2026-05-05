@@ -21,3 +21,18 @@ export async function login(req, res) {
 export async function me(req, res) {
   res.json(req.user);
 }
+
+export async function setupProfile(req, res) {
+  try {
+    const { nombre } = req.body;
+    // El usuario ya está autenticado (authenticate middleware lo verificó)
+    // Si ya tiene perfil (authenticate lo cargó), simplemente lo devolvemos
+    if (req.user) return res.json({ usuario: req.user });
+
+    // Si no tiene perfil aún, crearlo
+    const result = await authService.crearPerfil(req.authUserId, req.authEmail, nombre);
+    res.status(201).json(result);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+}
