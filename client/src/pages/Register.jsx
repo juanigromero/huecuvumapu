@@ -24,7 +24,7 @@ export default function Register() {
       const data = await register(form);
       dispatch(setCredentials({
         user: data.user,
-        token: data.session?.access_token || data.token,
+        token: data.session.access_token,
       }));
       navigate('/dashboard');
     } catch (err) {

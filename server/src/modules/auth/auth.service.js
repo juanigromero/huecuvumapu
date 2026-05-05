@@ -1,6 +1,7 @@
 import { supabase } from '../../config/db.js';
 
 export async function register({ email, password, nombre }) {
+  // Crear usuario en Supabase Auth
   const { data, error } = await supabase.auth.admin.createUser({
     email,
     password,
@@ -8,13 +9,19 @@ export async function register({ email, password, nombre }) {
   });
   if (error) throw new Error(error.message);
 
-  await supabase.from('usuarios').insert({
+  // Crear perfil en tabla usuarios
+  const { error: insertError } = await supabase.from('usuarios').insert({
     id: data.user.id,
     email,
     nombre: nombre || null,
   });
+  if (insertError) throw new Error(insertError.message);
 
-  return { user: data.user };
+  // Iniciar sesión para obtener el token
+  const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+  if (loginError) throw new Error(loginError.message);
+
+  return { user: loginData.user, session: loginData.session };
 }
 
 export async function login({ email, password }) {

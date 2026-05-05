@@ -14,6 +14,8 @@ export async function authenticate(req, res, next) {
     .eq('id', data.user.id)
     .single();
 
+  if (!usuario) return res.status(401).json({ error: 'Usuario no encontrado en el sistema' });
+
   req.user = usuario;
   next();
 }
