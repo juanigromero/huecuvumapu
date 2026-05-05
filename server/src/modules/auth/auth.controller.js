@@ -1,4 +1,5 @@
 import * as authService from './auth.service.js';
+import { vincularInvitacionesPendientes } from '../invitaciones/invitaciones.service.js';
 
 export async function register(req, res) {
   try {
@@ -31,6 +32,10 @@ export async function setupProfile(req, res) {
 
     // Si no tiene perfil aún, crearlo
     const result = await authService.crearPerfil(req.authUserId, req.authEmail, nombre);
+
+    // Vincular invitaciones pendientes con ese email
+    await vincularInvitacionesPendientes(req.authEmail, req.authUserId);
+
     res.status(201).json(result);
   } catch (err) {
     res.status(400).json({ error: err.message });

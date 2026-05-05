@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import Nav from '../components/ui/Nav';
 import SectionBar from '../components/ui/SectionBar';
+import InvitarMiembro from '../components/ui/InvitarMiembro';
 import { obtenerEspacio } from '../services/espaciosService';
 import styles from './Perfil.module.css';
 
 export default function EspacioPerfil() {
   const { handle } = useParams();
+  const user = useSelector(s => s.auth.user);
   const [espacio, setEspacio] = useState(null);
   const [error, setError] = useState(null);
 
@@ -49,25 +52,29 @@ export default function EspacioPerfil() {
           </div>
         </div>
 
-        {miembros.length > 0 && (
-          <div className={styles.sidebar}>
-            <SectionBar label="Responsables" />
-            <div className={styles.miembros}>
-              {miembros.map(m => (
-                <div key={m.usuario_id} className={styles.miembro}>
-                  {m.usuarios?.avatar_url
-                    ? <img src={m.usuarios.avatar_url} className={styles.miembroAvatar} alt="" />
-                    : <div className={styles.miembroAvatarPlaceholder}>{m.usuarios?.nombre?.[0] || '?'}</div>
-                  }
-                  <div>
-                    <span className={styles.miembroNombre}>{m.usuarios?.nombre || 'Usuario'}</span>
-                    <span className={styles.miembroRol}>{m.rol_interno}</span>
-                  </div>
+        <div className={styles.sidebar}>
+          <SectionBar label="Responsables" />
+          <div className={styles.miembros}>
+            {miembros.map(m => (
+              <div key={m.usuario_id} className={styles.miembro}>
+                {m.usuarios?.avatar_url
+                  ? <img src={m.usuarios.avatar_url} className={styles.miembroAvatar} alt="" />
+                  : <div className={styles.miembroAvatarPlaceholder}>{m.usuarios?.nombre?.[0] || '?'}</div>
+                }
+                <div>
+                  <span className={styles.miembroNombre}>{m.usuarios?.nombre || 'Usuario'}</span>
+                  <span className={styles.miembroRol}>{m.rol_interno}</span>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        )}
+          {miembros.find(m => m.usuario_id === user?.id)?.rol_interno === 'owner' && (
+            <>
+              <SectionBar label="Invitar miembro" />
+              <InvitarMiembro entidad_tipo="espacio" entidad_id={espacio.id} />
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

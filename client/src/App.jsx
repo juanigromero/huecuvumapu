@@ -9,6 +9,7 @@ import NuevoEvento from './pages/NuevoEvento';
 import CrearProyecto from './pages/CrearProyecto';
 import CrearEspacio from './pages/CrearEspacio';
 import Mapa from './pages/Mapa';
+import AceptarInvitacion from './pages/AceptarInvitacion';
 import ProtectedRoute from './components/ui/ProtectedRoute';
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/p/:handle" element={<ProyectoPerfil />} />
         <Route path="/e/:handle" element={<EspacioPerfil />} />
         <Route path="/mapa" element={<Mapa />} />
+        <Route path="/invitacion/:token" element={<AceptarInvitacion />} />
         <Route
           path="/dashboard"
           element={<ProtectedRoute><Dashboard /></ProtectedRoute>}

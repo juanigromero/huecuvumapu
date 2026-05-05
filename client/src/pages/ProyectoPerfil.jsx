@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import Nav from '../components/ui/Nav';
 import SectionBar from '../components/ui/SectionBar';
-import EventoCard from '../components/eventos/EventoCard';
 import Tag from '../components/ui/Tag';
+import InvitarMiembro from '../components/ui/InvitarMiembro';
 import { obtenerProyecto } from '../services/proyectosService';
 import styles from './Perfil.module.css';
 
 export default function ProyectoPerfil() {
   const { handle } = useParams();
+  const user = useSelector(s => s.auth.user);
   const [proyecto, setProyecto] = useState(null);
   const [error, setError] = useState(null);
 
@@ -20,7 +22,8 @@ export default function ProyectoPerfil() {
   if (!proyecto) return <div className={styles.loading}>Cargando...</div>;
 
   const miembros = proyecto.proyecto_miembros || [];
-  const hoy = new Date().toISOString().split('T')[0];
+  const miembroActual = miembros.find(m => m.usuario_id === user?.id);
+  const esOwner = miembroActual?.rol_interno === 'owner';
 
   return (
     <div className={styles.page}>
@@ -41,12 +44,10 @@ export default function ProyectoPerfil() {
       <div className={styles.body}>
         <div className={styles.main}>
           {proyecto.bio && <p className={styles.bio}>{proyecto.bio}</p>}
-
           <div className={styles.tags}>
             {proyecto.tipo && <Tag label={proyecto.tipo.replace('_', ' ')} />}
             {(proyecto.categorias || []).map(c => <Tag key={c} label={c} />)}
           </div>
-
           <div className={styles.stats}>
             <div className={styles.stat}>
               <span className={styles.statNum}>{proyecto.eventos_aprobados}</span>
@@ -55,25 +56,30 @@ export default function ProyectoPerfil() {
           </div>
         </div>
 
-        {miembros.length > 0 && (
-          <div className={styles.sidebar}>
-            <SectionBar label="Integrantes" />
-            <div className={styles.miembros}>
-              {miembros.map(m => (
-                <div key={m.usuario_id} className={styles.miembro}>
-                  {m.usuarios?.avatar_url
-                    ? <img src={m.usuarios.avatar_url} className={styles.miembroAvatar} alt="" />
-                    : <div className={styles.miembroAvatarPlaceholder}>{m.usuarios?.nombre?.[0] || '?'}</div>
-                  }
-                  <div>
-                    <span className={styles.miembroNombre}>{m.usuarios?.nombre || 'Usuario'}</span>
-                    <span className={styles.miembroRol}>{m.rol_interno}</span>
-                  </div>
+        <div className={styles.sidebar}>
+          <SectionBar label="Integrantes" />
+          <div className={styles.miembros}>
+            {miembros.map(m => (
+              <div key={m.usuario_id} className={styles.miembro}>
+                {m.usuarios?.avatar_url
+                  ? <img src={m.usuarios.avatar_url} className={styles.miembroAvatar} alt="" />
+                  : <div className={styles.miembroAvatarPlaceholder}>{m.usuarios?.nombre?.[0] || '?'}</div>
+                }
+                <div>
+                  <span className={styles.miembroNombre}>{m.usuarios?.nombre || 'Usuario'}</span>
+                  <span className={styles.miembroRol}>{m.rol_interno}</span>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        )}
+
+          {esOwner && (
+            <>
+              <SectionBar label="Invitar miembro" />
+              <InvitarMiembro entidad_tipo="proyecto" entidad_id={proyecto.id} />
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
