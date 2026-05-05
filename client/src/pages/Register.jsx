@@ -49,7 +49,7 @@ export default function Register() {
               className={styles.input}
               name="nombre"
               type="text"
-              placeholder="Tu nombre o el de tu proyecto"
+              placeholder="Tu nombre"
               value={form.nombre}
               onChange={handleChange}
             />
