@@ -44,12 +44,22 @@ const PERIODOS = [
 ];
 
 export default function Home() {
+  const [destacado, setDestacado] = useState(null);
   const [eventos, setEventos] = useState([]);
   const [filtroCategoria, setFiltroCategoria] = useState('');
   const [filtroPeriodo, setFiltroPeriodo] = useState('todos');
   const [fechaCustom, setFechaCustom] = useState('');
   const [loading, setLoading] = useState(true);
 
+  // Fetch inicial para el destacado — sin filtros
+  useEffect(() => {
+    const hoy = new Date().toISOString().split('T')[0];
+    listarEventos({ fecha_desde: hoy }).then(evs => {
+      setDestacado(evs.find(e => e.destacado) || evs[0] || null);
+    });
+  }, []);
+
+  // Fetch filtrado para la grilla
   useEffect(() => {
     setLoading(true);
     const { desde, hasta } = getRangoFecha(filtroPeriodo);
@@ -59,10 +69,10 @@ export default function Home() {
     listarEventos(params).then(setEventos).finally(() => setLoading(false));
   }, [filtroPeriodo, fechaCustom]);
 
-  const hoy = new Date().toISOString().split('T')[0];
-  const proximos = eventos.filter(e => !filtroCategoria || e.categorias?.includes(filtroCategoria));
-  const destacado = eventos.find(e => e.destacado) || eventos[0];
-  const grilla = proximos.filter(e => e.id !== destacado?.id).slice(0, 9);
+  const proximos = eventos.filter(e =>
+    e.id !== destacado?.id &&
+    (!filtroCategoria || e.categorias?.includes(filtroCategoria))
+  ).slice(0, 9);
 
   return (
     <div className={styles.page}>
@@ -139,7 +149,7 @@ export default function Home() {
         <p className={styles.vacio}>No hay eventos en ese período.</p>
       ) : (
         <div className={styles.grilla}>
-          {grilla.map((e, i) => <EventoCard key={e.id} evento={e} index={i} />)}
+          {proximos.map((e, i) => <EventoCard key={e.id} evento={e} index={i} />)}
         </div>
       )}
 
