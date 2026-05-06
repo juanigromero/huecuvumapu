@@ -8,6 +8,7 @@ import { misEspacios, buscarEspacios } from '../services/espaciosService';
 import { crearEvento } from '../services/eventosService';
 import { useNominatim } from '../hooks/useNominatim';
 import MapaPicker from '../components/ui/MapaPicker';
+import ImageUpload from '../components/ui/ImageUpload';
 import styles from './NuevoEvento.module.css';
 
 const CATEGORIAS = ['musica', 'visual', 'teatro', 'popular'];
@@ -37,6 +38,7 @@ export default function NuevoEvento() {
     proyecto_id: '', proyecto_texto: '',
     espacio_id: '', espacio_texto: '',
     lat: null, lng: null,
+    imagen_url: '',
     categorias: [],
   });
 
@@ -310,6 +312,17 @@ export default function NuevoEvento() {
               </div>
             )}
           </fieldset>
+
+          <div className={styles.field}>
+            <label className={styles.label}>Imagen del evento</label>
+            <ImageUpload
+              valor={form.imagen_url}
+              onChange={url => setForm(f => ({ ...f, imagen_url: url }))}
+              carpeta="eventos"
+              tipo="cover"
+              label="+ imagen"
+            />
+          </div>
 
           <div className={styles.field}>
             <label className={styles.label}>Descripción</label>

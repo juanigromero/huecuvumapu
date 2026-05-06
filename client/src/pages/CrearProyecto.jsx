@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import Nav from '../components/ui/Nav';
 import SectionBar from '../components/ui/SectionBar';
+import ImageUpload from '../components/ui/ImageUpload';
 import { crearProyecto } from '../services/proyectosService';
 import styles from './CrearEntidad.module.css';
 
@@ -12,7 +13,7 @@ const CATEGORIAS = ['musica', 'visual', 'teatro', 'popular'];
 export default function CrearProyecto() {
   const token = useSelector(s => s.auth.token);
   const navigate = useNavigate();
-  const [form, setForm] = useState({ nombre: '', handle: '', bio: '', tipo: 'banda', ciudad: 'Bahía Blanca', categorias: [] });
+  const [form, setForm] = useState({ nombre: '', handle: '', bio: '', tipo: 'banda', ciudad: 'Bahía Blanca', categorias: [], avatar_url: '', cover_url: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -21,14 +22,11 @@ export default function CrearProyecto() {
   }
 
   function autoHandle(e) {
-    handleChange(e);
-    if (e.target.name === 'nombre') {
-      setForm(f => ({
-        ...f,
-        nombre: e.target.value,
-        handle: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
-      }));
-    }
+    setForm(f => ({
+      ...f,
+      nombre: e.target.value,
+      handle: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+    }));
   }
 
   function toggleCategoria(c) {
@@ -100,6 +98,29 @@ export default function CrearProyecto() {
           <div className={styles.field}>
             <label className={styles.label}>Bio</label>
             <textarea className={styles.textarea} name="bio" value={form.bio} onChange={handleChange} rows={3} placeholder="Contá quiénes son..." />
+          </div>
+
+          <div className={styles.imagenesRow}>
+            <div className={styles.field}>
+              <label className={styles.label}>Foto de perfil</label>
+              <ImageUpload
+                valor={form.avatar_url}
+                onChange={url => setForm(f => ({ ...f, avatar_url: url }))}
+                carpeta="avatars/proyectos"
+                tipo="cuadrada"
+                label="+ foto"
+              />
+            </div>
+            <div className={styles.field} style={{ flex: 1 }}>
+              <label className={styles.label}>Imagen de portada</label>
+              <ImageUpload
+                valor={form.cover_url}
+                onChange={url => setForm(f => ({ ...f, cover_url: url }))}
+                carpeta="covers/proyectos"
+                tipo="cover"
+                label="+ portada"
+              />
+            </div>
           </div>
 
           {error && <p className={styles.error}>{error}</p>}

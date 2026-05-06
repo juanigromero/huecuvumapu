@@ -166,6 +166,12 @@
 
 .btnCancel:hover { color: #111; }
 
+.imagenesRow {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
 @media (max-width: 600px) {
   .row { grid-template-columns: 1fr; }
 }

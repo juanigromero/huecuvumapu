@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import Nav from '../components/ui/Nav';
 import SectionBar from '../components/ui/SectionBar';
+import ImageUpload from '../components/ui/ImageUpload';
 import { crearEspacio } from '../services/espaciosService';
 import styles from './CrearEntidad.module.css';
 
@@ -19,7 +20,7 @@ async function geocodificar(direccion, ciudad) {
 export default function CrearEspacio() {
   const token = useSelector(s => s.auth.token);
   const navigate = useNavigate();
-  const [form, setForm] = useState({ nombre: '', handle: '', descripcion: '', direccion: '', ciudad: 'Bahía Blanca', lat: null, lng: null });
+  const [form, setForm] = useState({ nombre: '', handle: '', descripcion: '', direccion: '', ciudad: 'Bahía Blanca', lat: null, lng: null, avatar_url: '', cover_url: '' });
   const [loading, setLoading] = useState(false);
   const [geocodingStatus, setGeocodingStatus] = useState(null); // null | 'buscando' | 'ok' | 'no_encontrado'
   const [error, setError] = useState(null);
@@ -107,6 +108,17 @@ export default function CrearEspacio() {
           <div className={styles.field}>
             <label className={styles.label}>Descripción</label>
             <textarea className={styles.textarea} name="descripcion" value={form.descripcion} onChange={handleChange} rows={3} placeholder="Contá qué es el espacio..." />
+          </div>
+
+          <div className={styles.imagenesRow}>
+            <div className={styles.field}>
+              <label className={styles.label}>Foto de perfil</label>
+              <ImageUpload valor={form.avatar_url} onChange={url => setForm(f => ({ ...f, avatar_url: url }))} carpeta="avatars/espacios" tipo="cuadrada" label="+ foto" />
+            </div>
+            <div className={styles.field} style={{ flex: 1 }}>
+              <label className={styles.label}>Imagen de portada</label>
+              <ImageUpload valor={form.cover_url} onChange={url => setForm(f => ({ ...f, cover_url: url }))} carpeta="covers/espacios" tipo="cover" label="+ portada" />
+            </div>
           </div>
 
           {error && <p className={styles.error}>{error}</p>}
