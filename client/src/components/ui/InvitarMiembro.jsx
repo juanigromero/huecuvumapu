@@ -5,6 +5,7 @@ import styles from './InvitarMiembro.module.css';
 
 export default function InvitarMiembro({ entidad_tipo, entidad_id }) {
   const token = useSelector(s => s.auth.token);
+  const [abierto, setAbierto] = useState(false);
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [resultado, setResultado] = useState(null);
@@ -31,27 +32,41 @@ export default function InvitarMiembro({ entidad_tipo, entidad_id }) {
 
   return (
     <div className={styles.wrap}>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <input
-          className={styles.input}
-          type="email"
-          placeholder="email del miembro"
-          value={email}
-          onChange={e => { setEmail(e.target.value); setResultado(null); setError(null); }}
-          required
-        />
-        <button className={styles.btn} type="submit" disabled={loading}>
-          {loading ? '...' : 'invitar'}
-        </button>
-      </form>
+      <button
+        type="button"
+        className={styles.trigger}
+        onClick={() => { setAbierto(v => !v); setResultado(null); setError(null); }}
+      >
+        <span>+ Invitar miembro</span>
+        <span className={`${styles.arrow} ${abierto ? styles.arrowOpen : ''}`}>▸</span>
+      </button>
 
-      {resultado === 'agregado_directo' && (
-        <p className={styles.ok}>✓ Agregado como miembro.</p>
+      {abierto && (
+        <div className={styles.panel}>
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <input
+              className={styles.input}
+              type="email"
+              placeholder="email del miembro"
+              value={email}
+              onChange={e => { setEmail(e.target.value); setResultado(null); setError(null); }}
+              required
+              autoFocus
+            />
+            <button className={styles.btn} type="submit" disabled={loading}>
+              {loading ? '...' : 'invitar'}
+            </button>
+          </form>
+
+          {resultado === 'agregado_directo' && (
+            <p className={styles.ok}>✓ Agregado como miembro.</p>
+          )}
+          {resultado === 'invitacion_enviada' && (
+            <p className={styles.ok}>✓ Invitación enviada. El link expira en 7 días.</p>
+          )}
+          {error && <p className={styles.err}>{error}</p>}
+        </div>
       )}
-      {resultado === 'invitacion_enviada' && (
-        <p className={styles.ok}>✓ Invitación enviada. El link expira en 7 días.</p>
-      )}
-      {error && <p className={styles.err}>{error}</p>}
     </div>
   );
 }

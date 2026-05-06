@@ -73,10 +73,7 @@ export default function EspacioPerfil() {
             ))}
           </div>
           {esOwner && (
-            <>
-              <SectionBar label="Invitar miembro" />
-              <InvitarMiembro entidad_tipo="espacio" entidad_id={espacio.id} />
-            </>
+            <InvitarMiembro entidad_tipo="espacio" entidad_id={espacio.id} />
           )}
         </div>
       </div>

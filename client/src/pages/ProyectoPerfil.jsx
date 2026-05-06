@@ -93,10 +93,7 @@ export default function ProyectoPerfil() {
             ))}
           </div>
           {esOwner && (
-            <>
-              <SectionBar label="Invitar miembro" />
-              <InvitarMiembro entidad_tipo="proyecto" entidad_id={proyecto.id} />
-            </>
+            <InvitarMiembro entidad_tipo="proyecto" entidad_id={proyecto.id} />
           )}
         </div>
       </div>
