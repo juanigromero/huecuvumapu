@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 
-// Photon (komoot) — OSM con Elasticsearch, mejor búsqueda fuzzy que Nominatim
-// Completamente gratis, sin API key, sin cuenta
 const BAHIA_LAT = -38.7196;
 const BAHIA_LNG = -62.2724;
 
@@ -19,16 +17,19 @@ function mapearPhoton(r) {
 export function useNominatim(query) {
   const [resultados, setResultados] = useState([]);
   const [buscando, setBuscando] = useState(false);
-  // activo = true desde que hay query hasta que llegan los resultados (incluye el debounce)
-  const [activo, setActivo] = useState(false);
+  const [terminado, setTerminado] = useState(false); // true cuando la búsqueda completó al menos una vez
 
   useEffect(() => {
-    if (!query || query.length < 2) { setResultados([]); setActivo(false); return; }
+    if (!query || query.length < 2) {
+      setResultados([]);
+      setTerminado(false);
+      return;
+    }
 
-    setActivo(true);
-    setBuscando(false);
+    setBuscando(true);
+    setTerminado(false);
+
     const t = setTimeout(async () => {
-      setBuscando(true);
       try {
         const params = new URLSearchParams({
           q: query,
@@ -40,29 +41,27 @@ export function useNominatim(query) {
         const res = await fetch(`https://photon.komoot.io/api/?${params}`);
         const data = await res.json();
 
-        const resultados = data.features
-          .filter(r => r.properties.name) // solo resultados con nombre
-          .map(mapearPhoton);
-
-        // Deduplicar por osm_id
         const vistos = new Set();
-        const unicos = resultados.filter(r => {
-          if (vistos.has(r.osm_id)) return false;
-          vistos.add(r.osm_id);
-          return true;
-        });
+        const unicos = data.features
+          .filter(r => r.properties.name)
+          .map(mapearPhoton)
+          .filter(r => {
+            if (vistos.has(r.osm_id)) return false;
+            vistos.add(r.osm_id);
+            return true;
+          });
 
         setResultados(unicos);
       } catch {
         setResultados([]);
       } finally {
         setBuscando(false);
-        setActivo(false);
+        setTerminado(true);
       }
-    }, 400);
+    }, 500);
 
     return () => clearTimeout(t);
   }, [query]);
 
-  return { resultados, buscando: buscando || activo };
+  return { resultados, buscando, terminado };
 }

@@ -29,7 +29,7 @@ export default function NuevoEvento() {
   const [direccionManual, setDireccionManual] = useState('');
   const [geocodingManual, setGeocodingManual] = useState(null); // null | 'buscando' | 'ok' | 'no_encontrado'
 
-  const { resultados: sugerenciasNominatim, buscando: buscandoNominatim } = useNominatim(
+  const { resultados: sugerenciasNominatim, buscando: buscandoNominatim, terminado: busquedaTerminada } = useNominatim(
     seleccion ? '' : busqueda
   );
 
@@ -295,7 +295,7 @@ export default function NuevoEvento() {
               )}
 
               {/* Ubicación cuando el lugar no está en el dropdown */}
-              {!seleccion && busqueda.length >= 2 && !buscandoNominatim && sugerenciasNominatim.length === 0 && espaciosRegistrados.length === 0 && (
+              {!seleccion && busquedaTerminada && sugerenciasNominatim.length === 0 && espaciosRegistrados.length === 0 && (
                 <div className={styles.direccionManualWrap}>
                   <label className={styles.direccionManualLabel}>
                     ¿No lo encontrás? Ingresá la dirección o marcá en el mapa:
