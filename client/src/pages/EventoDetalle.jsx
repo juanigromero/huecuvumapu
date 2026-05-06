@@ -170,11 +170,12 @@ export default function EventoDetalle() {
           {/* ENTRADA */}
           <div className={styles.sideBlock}>
             <span className={styles.sideLabel}>Entrada</span>
-            <EntradaBadge entrada={evento.entrada} />
-            {evento.link_externo && (
+            {evento.entrada === 'pago' && evento.link_externo ? (
               <a href={evento.link_externo} target="_blank" rel="noopener noreferrer" className={styles.linkExterno}>
                 Conseguir entradas →
               </a>
+            ) : (
+              <EntradaBadge entrada={evento.entrada} />
             )}
           </div>
 
