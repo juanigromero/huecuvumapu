@@ -10,6 +10,7 @@ import eventosRoutes from './modules/eventos/eventos.routes.js';
 import confirmacionesRoutes from './modules/confirmaciones/confirmaciones.routes.js';
 import invitacionesRoutes from './modules/invitaciones/invitaciones.routes.js';
 import moderacionRoutes from './modules/moderacion/moderacion.routes.js';
+import notificacionesRoutes from './modules/notificaciones/notificaciones.routes.js';
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use('/api/eventos', eventosRoutes);
 app.use('/api/confirmaciones', confirmacionesRoutes);
 app.use('/api/invitaciones', invitacionesRoutes);
 app.use('/api/moderacion', moderacionRoutes);
+app.use('/api/notificaciones', notificacionesRoutes);
 
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 

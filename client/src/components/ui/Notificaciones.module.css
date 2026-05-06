@@ -1,0 +1,127 @@
+.wrap {
+  position: relative;
+}
+
+.campana {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #555;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.campana:hover { color: #111; }
+
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -6px;
+  background: #111;
+  color: #f5f0e8;
+  font-size: 9px;
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 300px;
+  background: #f5f0e8;
+  border: 2px solid #111;
+  box-shadow: 4px 4px 0 #111;
+  z-index: 200;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.dropdownHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1rem;
+  background: #111;
+}
+
+.dropdownTitulo {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f5f0e8;
+}
+
+.btnMarcar {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #c8f0d8;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.btnMarcar:hover { color: #fff; }
+
+.vacio {
+  padding: 1.5rem 1rem;
+  font-size: 13px;
+  color: #999;
+  text-align: center;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.item:hover { background: #eee8d8; }
+.item:last-child { border-bottom: none; }
+
+.itemNoLeida { background: #fff; }
+
+.punto {
+  width: 7px;
+  height: 7px;
+  background: #111;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.itemTexto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+}
+
+.itemLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111;
+  line-height: 1.3;
+}
+
+.itemTime {
+  font-size: 11px;
+  color: #999;
+}

@@ -1,4 +1,5 @@
 import { supabase } from '../../config/db.js';
+import { notificarConfirmacionRecibida } from '../notificaciones/notificaciones.service.js';
 
 export async function listarPendientes(usuarioId) {
   const [{ data: proyectos }, { data: espacios }] = await Promise.all([
@@ -57,5 +58,6 @@ export async function responder(confirmacionId, usuarioId, estado, nota) {
     .single();
 
   if (error) throw new Error(error.message);
+  await notificarConfirmacionRecibida(data);
   return data;
 }

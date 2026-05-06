@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../store/authSlice';
 import { logoutSupabase } from '../../services/authService';
+import Notificaciones from './Notificaciones';
 import styles from './Nav.module.css';
 
 export default function Nav() {
@@ -25,6 +26,7 @@ export default function Nav() {
           <>
             <Link to="/dashboard" className={styles.link}>dashboard</Link>
             {user?.es_admin && <Link to="/admin" className={styles.link}>admin</Link>}
+            <Notificaciones />
             <button onClick={handleLogout} className={styles.btnLogout}>salir</button>
           </>
         ) : (

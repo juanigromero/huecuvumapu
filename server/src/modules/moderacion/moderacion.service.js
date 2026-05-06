@@ -1,4 +1,5 @@
 import { supabase } from '../../config/db.js';
+import { notificarEventoAprobado } from '../notificaciones/notificaciones.service.js';
 
 export async function listarPendientes() {
   const { data, error } = await supabase
@@ -30,6 +31,7 @@ export async function aprobar(eventoId) {
   const entidadId = evento.iniciador === 'proyecto' ? evento.proyecto_id : evento.espacio_id;
   const { data: entidad } = await supabase.from(tabla).select('eventos_aprobados').eq('id', entidadId).single();
   await supabase.from(tabla).update({ eventos_aprobados: (entidad.eventos_aprobados || 0) + 1 }).eq('id', entidadId);
+  await notificarEventoAprobado(evento);
 
   return evento;
 }
