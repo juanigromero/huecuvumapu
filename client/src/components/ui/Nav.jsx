@@ -10,7 +10,8 @@ export default function Nav() {
   const user = useSelector((s) => s.auth.user);
 
   async function handleLogout() {
-    await logoutSupabase(); // Supabase limpia la sesión → dispara onAuthStateChange → Redux se actualiza
+    try { await logoutSupabase(); } catch (_) {}
+    dispatch(logout());
     navigate('/');
   }
 
