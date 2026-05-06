@@ -354,6 +354,34 @@
   cursor: not-allowed;
 }
 
+.btnCancelarEvento {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.65rem 1rem;
+  background: transparent;
+  color: #999;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.btnCancelarEvento:hover { border-color: #c00; color: #c00; }
+
+.btnCancelarEventoConfirm {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  background: #c00;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
 @media (max-width: 600px) {
   .row { grid-template-columns: 1fr; }
 }

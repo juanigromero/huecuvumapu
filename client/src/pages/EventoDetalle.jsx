@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import L from 'leaflet';
 import Nav from '../components/ui/Nav';
 import Tag from '../components/ui/Tag';
 import { obtenerEvento } from '../services/eventosService';
+import { misProyectos } from '../services/proyectosService';
+import { misEspacios } from '../services/espaciosService';
 import styles from './EventoDetalle.module.css';
 import 'leaflet/dist/leaflet.css';
 
@@ -42,12 +45,26 @@ function ConfirmacionBadge({ confirmaciones = [], iniciador }) {
 
 export default function EventoDetalle() {
   const { id } = useParams();
+  const token = useSelector(s => s.auth.token);
   const [evento, setEvento] = useState(null);
+  const [puedeEditar, setPuedeEditar] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    obtenerEvento(id).then(setEvento).catch(() => setError('Evento no encontrado'));
-  }, [id]);
+    obtenerEvento(id).then(async e => {
+      setEvento(e);
+      if (token) {
+        const [proyectos, espacios] = await Promise.all([misProyectos(token), misEspacios(token)]);
+        const misIds = {
+          proyectos: proyectos.map(p => p.id),
+          espacios: espacios.map(s => s.id),
+        };
+        const puede = (e.iniciador === 'proyecto' && misIds.proyectos.includes(e.proyecto_id)) ||
+                      (e.iniciador === 'espacio' && misIds.espacios.includes(e.espacio_id));
+        setPuedeEditar(puede);
+      }
+    }).catch(() => setError('Evento no encontrado'));
+  }, [id, token]);
 
   if (error) return (
     <div className={styles.page}>
@@ -83,7 +100,12 @@ export default function EventoDetalle() {
                 {evento.categorias?.map(c => <Tag key={c} label={c} />)}
                 {evento.agotado && <span className={styles.agotado}>agotado</span>}
               </div>
-              <ConfirmacionBadge confirmaciones={evento.confirmaciones} iniciador={evento.iniciador} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <ConfirmacionBadge confirmaciones={evento.confirmaciones} iniciador={evento.iniciador} />
+                {puedeEditar && (
+                  <Link to={`/eventos/${id}/editar`} className={styles.btnEditar}>Editar</Link>
+                )}
+              </div>
             </div>
             <h1 className={styles.titulo}>{evento.titulo}</h1>
           </div>
