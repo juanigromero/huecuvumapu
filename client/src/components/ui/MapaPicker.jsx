@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -33,10 +33,27 @@ function ClickHandler({ onPick }) {
   return null;
 }
 
+function CentrarMapa({ pin }) {
+  const map = useMapEvents({});
+  useEffect(() => {
+    if (pin) map.setView(pin, map.getZoom());
+  }, [pin]);
+  return null;
+}
+
 export default function MapaPicker({ lat, lng, onChange }) {
   const [pin, setPin] = useState(lat && lng ? [lat, lng] : null);
   const [direccion, setDireccion] = useState(null);
   const [buscando, setBuscando] = useState(false);
+
+  // Sincronizar pin cuando las coordenadas vienen del geocoding de dirección
+  useEffect(() => {
+    if (lat && lng && (!pin || pin[0] !== lat || pin[1] !== lng)) {
+      setPin([lat, lng]);
+      setDireccion(null);
+      reverseGeocode(lat, lng).then(setDireccion);
+    }
+  }, [lat, lng]);
 
   async function handlePick(lat, lng) {
     setPin([lat, lng]);
@@ -65,6 +82,7 @@ export default function MapaPicker({ lat, lng, onChange }) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <ClickHandler onPick={handlePick} />
+        <CentrarMapa pin={pin} />
         {pin && <Marker position={pin} />}
       </MapContainer>
 

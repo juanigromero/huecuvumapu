@@ -323,18 +323,12 @@ export default function NuevoEvento() {
                     </button>
                   </div>
 
-                  {geocodingManual === 'ok' && (
-                    <span className={styles.hintOk}>✓ Ubicación encontrada — va a aparecer en el mapa</span>
-                  )}
-
-                  {/* Picker de mapa: si geocoding falla o no intentó */}
-                  {(geocodingManual === 'no_encontrado' || geocodingManual === null) && (
-                    <MapaPicker
-                      lat={form.lat}
-                      lng={form.lng}
-                      onChange={(lat, lng, dir) => setForm(f => ({ ...f, lat, lng, espacio_texto: busqueda, espacio_direccion: dir || '' }))}
-                    />
-                  )}
+                  {/* Mapa siempre visible — con pin si ya geocodificó, vacío si no */}
+                  <MapaPicker
+                    lat={form.lat}
+                    lng={form.lng}
+                    onChange={(lat, lng, dir) => setForm(f => ({ ...f, lat, lng, espacio_texto: busqueda, espacio_direccion: dir || '' }))}
+                  />
                 </div>
               )}
             </div>
