@@ -1,27 +1,44 @@
 import { useState, useEffect } from 'react';
 
-const BAHIA_LAT = -38.7196;
-const BAHIA_LNG = -62.2724;
+const BAHIA_VIEWBOX = '-62.40,-38.85,-62.10,-38.60';
 
-function mapearPhoton(r) {
-  const p = r.properties;
+async function buscarNominatim(q, extraParams = {}) {
+  const params = new URLSearchParams({
+    q,
+    format: 'json',
+    limit: 5,
+    addressdetails: 1,
+    namedetails: 1,
+    countrycodes: 'ar',
+    ...extraParams,
+  });
+  const res = await fetch(`https://nominatim.openstreetmap.org/search?${params}`, {
+    headers: { 'Accept-Language': 'es' },
+  });
+  return res.json();
+}
+
+function mapear(r) {
   return {
-    nombre: p.name || p.city || '',
-    direccion: [p.street, p.housenumber].filter(Boolean).join(' ') || p.district || '',
-    lat: r.geometry.coordinates[1],
-    lng: r.geometry.coordinates[0],
-    osm_id: r.properties.osm_id,
+    nombre: r.namedetails?.name || r.name || r.display_name.split(',')[0],
+    direccion: [r.address?.road, r.address?.house_number].filter(Boolean).join(' ')
+      || r.address?.suburb
+      || r.display_name.split(',').slice(0, 2).join(',').trim(),
+    lat: parseFloat(r.lat),
+    lng: parseFloat(r.lon),
+    place_id: r.place_id,
   };
 }
 
-export function useNominatim(query) {
+export function useNominatim(query, ciudad = 'Bahía Blanca') {
   const [resultados, setResultados] = useState([]);
   const [buscando, setBuscando] = useState(false);
-  const [terminado, setTerminado] = useState(false); // true cuando la búsqueda completó al menos una vez
+  const [terminado, setTerminado] = useState(false);
 
   useEffect(() => {
     if (!query || query.length < 2) {
       setResultados([]);
+      setBuscando(false);
       setTerminado(false);
       return;
     }
@@ -31,27 +48,19 @@ export function useNominatim(query) {
 
     const t = setTimeout(async () => {
       try {
-        const params = new URLSearchParams({
-          q: query,
-          lat: BAHIA_LAT,
-          lon: BAHIA_LNG,
-          limit: 6,
-          lang: 'es',
-        });
-        const res = await fetch(`https://photon.komoot.io/api/?${params}`);
-        const data = await res.json();
+        const [r1, r2] = await Promise.all([
+          buscarNominatim(`${query}, ${ciudad}`, { viewbox: BAHIA_VIEWBOX, bounded: 0 }),
+          buscarNominatim(query, { viewbox: BAHIA_VIEWBOX, bounded: 1 }),
+        ]);
 
         const vistos = new Set();
-        const unicos = data.features
-          .filter(r => r.properties.name)
-          .map(mapearPhoton)
-          .filter(r => {
-            if (vistos.has(r.osm_id)) return false;
-            vistos.add(r.osm_id);
-            return true;
-          });
+        const unicos = [...r1, ...r2].filter(r => {
+          if (vistos.has(r.place_id)) return false;
+          vistos.add(r.place_id);
+          return true;
+        });
 
-        setResultados(unicos);
+        setResultados(unicos.slice(0, 6).map(mapear));
       } catch {
         setResultados([]);
       } finally {
@@ -61,7 +70,7 @@ export function useNominatim(query) {
     }, 500);
 
     return () => clearTimeout(t);
-  }, [query]);
+  }, [query, ciudad]);
 
   return { resultados, buscando, terminado };
 }
