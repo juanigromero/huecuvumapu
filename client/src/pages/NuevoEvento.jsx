@@ -80,10 +80,11 @@ export default function NuevoEvento() {
   }
 
   function elegirLugarNominatim(lugar) {
-    setSeleccion({ tipo: 'lugar', ...lugar });
-    setBusqueda(lugar.nombre);
+    // Usamos lo que el usuario escribió como nombre, Nominatim solo aporta las coordenadas
+    setSeleccion({ tipo: 'lugar', ...lugar, nombre: busqueda });
+    setBusqueda(busqueda);
     setEspaciosRegistrados([]);
-    setForm(f => ({ ...f, espacio_id: '', espacio_texto: lugar.nombre, lat: lugar.lat, lng: lugar.lng }));
+    setForm(f => ({ ...f, espacio_id: '', espacio_texto: busqueda, lat: lugar.lat, lng: lugar.lng }));
   }
 
   function limpiarSeleccion() {
@@ -209,76 +210,85 @@ export default function NuevoEvento() {
               <label className={styles.label}>Espacio donde se realiza</label>
 
               {seleccion ? (
-                <div className={seleccion.tipo === 'registrado' ? styles.seleccionRegistrado : styles.seleccionLugar}>
-                  <div className={styles.seleccionInfo}>
-                    {seleccion.tipo === 'registrado' && <span className={styles.seleccionBadge}>en huecuvumapu</span>}
-                    {seleccion.tipo === 'lugar' && <span className={styles.seleccionBadgeLugar}>ubicación</span>}
-                    <strong className={styles.seleccionNombre}>{seleccion.nombre}</strong>
-                    {seleccion.tipo === 'lugar' && seleccion.direccion && (
-                      <span className={styles.seleccionDireccion}>{seleccion.direccion}</span>
-                    )}
-                    {seleccion.tipo === 'registrado' && (
-                      <span className={styles.seleccionHint}>recibirá una solicitud de confirmación</span>
-                    )}
-                  </div>
-                  <button type="button" className={styles.seleccionCambiar} onClick={limpiarSeleccion}>cambiar</button>
-                </div>
-              ) : (
-                <div className={styles.buscador}>
-                  <input
-                    className={styles.input}
-                    placeholder="Escribí el nombre del lugar..."
-                    value={busqueda}
-                    onChange={e => setBusqueda(e.target.value)}
-                    autoComplete="off"
-                  />
-                  {busqueda.length >= 2 && buscandoNominatim && (
-                    <span className={styles.buscandoIndicador}>buscando...</span>
-                  )}
-
-                  {hayResultados && (
-                    <div className={styles.dropdown}>
-                      {espaciosRegistrados.length > 0 && (
-                        <>
-                          <div className={styles.dropdownSeccion}>en huecuvumapu</div>
-                          {espaciosRegistrados.map(e => (
-                            <button key={e.id} type="button" className={`${styles.dropdownItem} ${styles.dropdownItemRegistrado}`}
-                              onClick={() => elegirEspacioRegistrado(e)}>
-                              <strong>{e.nombre}</strong>
-                              {e.ciudad && <span> · {e.ciudad}</span>}
-                            </button>
-                          ))}
-                        </>
+                <>
+                  <div className={seleccion.tipo === 'registrado' ? styles.seleccionRegistrado : styles.seleccionLugar}>
+                    <div className={styles.seleccionInfo}>
+                      {seleccion.tipo === 'registrado' && <span className={styles.seleccionBadge}>en huecuvumapu</span>}
+                      {seleccion.tipo === 'lugar' && <span className={styles.seleccionBadgeLugar}>ubicación</span>}
+                      <strong className={styles.seleccionNombre}>{seleccion.nombre}</strong>
+                      {seleccion.tipo === 'lugar' && seleccion.direccion && (
+                        <span className={styles.seleccionDireccion}>{seleccion.direccion}</span>
                       )}
-                      {sugerenciasNominatim.length > 0 && (
-                        <>
-                          <div className={styles.dropdownSeccion}>lugares</div>
-                          {sugerenciasNominatim.map((l, i) => (
-                            <button key={i} type="button" className={styles.dropdownItem}
-                              onClick={() => elegirLugarNominatim(l)}>
-                              <strong>{l.nombre}</strong>
-                              {l.direccion && <span className={styles.dropdownDireccion}> · {l.direccion}</span>}
-                            </button>
-                          ))}
-                        </>
+                      {seleccion.tipo === 'registrado' && (
+                        <span className={styles.seleccionHint}>recibirá una solicitud de confirmación</span>
                       )}
                     </div>
+                    <button type="button" className={styles.seleccionCambiar} onClick={limpiarSeleccion}>cambiar</button>
+                  </div>
+                  {seleccion.tipo === 'lugar' && form.lat && form.lng && (
+                    <MapaPicker
+                      lat={form.lat}
+                      lng={form.lng}
+                      onChange={(lat, lng) => setForm(f => ({ ...f, lat, lng }))}
+                    />
                   )}
-                </div>
-              )}
+                </>
+              ) : (
+                <>
+                  <div className={styles.buscador}>
+                    <input
+                      className={styles.input}
+                      placeholder="Escribí el nombre del lugar..."
+                      value={busqueda}
+                      onChange={e => setBusqueda(e.target.value)}
+                      autoComplete="off"
+                    />
+                    {busqueda.length >= 2 && buscandoNominatim && (
+                      <span className={styles.buscandoIndicador}>buscando...</span>
+                    )}
+                    {hayResultados && (
+                      <div className={styles.dropdown}>
+                        {espaciosRegistrados.length > 0 && (
+                          <>
+                            <div className={styles.dropdownSeccion}>en huecuvumapu</div>
+                            {espaciosRegistrados.map(e => (
+                              <button key={e.id} type="button" className={`${styles.dropdownItem} ${styles.dropdownItemRegistrado}`}
+                                onClick={() => elegirEspacioRegistrado(e)}>
+                                <strong>{e.nombre}</strong>
+                                {e.ciudad && <span> · {e.ciudad}</span>}
+                              </button>
+                            ))}
+                          </>
+                        )}
+                        {sugerenciasNominatim.length > 0 && (
+                          <>
+                            <div className={styles.dropdownSeccion}>lugares</div>
+                            {sugerenciasNominatim.map((l, i) => (
+                              <button key={i} type="button" className={styles.dropdownItem}
+                                onClick={() => elegirLugarNominatim(l)}>
+                                <strong>{l.nombre}</strong>
+                                {l.direccion && <span className={styles.dropdownDireccion}> · {l.direccion}</span>}
+                              </button>
+                            ))}
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
 
-              {/* Sin resultados → mapa para ubicar manualmente */}
-              {!seleccion && busquedaTerminada && sugerenciasNominatim.length === 0 && espaciosRegistrados.length === 0 && (
-                <div className={styles.sinResultados}>
-                  <p className={styles.sinResultadosTexto}>
-                    No encontramos ese lugar. Marcá la ubicación en el mapa o buscá por dirección.
-                  </p>
-                  <MapaPicker
-                    lat={form.lat}
-                    lng={form.lng}
-                    onChange={(lat, lng, dir) => setForm(f => ({ ...f, lat, lng, espacio_texto: busqueda }))}
-                  />
-                </div>
+                  {busquedaTerminada && sugerenciasNominatim.length === 0 && espaciosRegistrados.length === 0 && (
+                    <div className={styles.sinResultados}>
+                      <p className={styles.sinResultadosTexto}>
+                        No encontramos ese lugar. Marcá la ubicación en el mapa o buscá por dirección.
+                      </p>
+                      <MapaPicker
+                        lat={form.lat}
+                        lng={form.lng}
+                        onChange={(lat, lng) => setForm(f => ({ ...f, lat, lng, espacio_texto: busqueda }))}
+                      />
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}
