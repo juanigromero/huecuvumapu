@@ -5,11 +5,12 @@ import { apiFetch } from '../../services/api';
 import styles from './Notificaciones.module.css';
 
 const LABELS = {
-  evento_vinculado:     'Te vincularon a un evento',
+  evento_vinculado:      'Te vincularon a un evento',
   confirmacion_recibida: 'Confirmación respondida',
-  evento_aprobado:      'Evento aprobado',
+  evento_aprobado:       'Evento aprobado',
+  evento_pendiente:      'Nuevo evento para revisar',
   nuevo_evento_seguido:  'Nuevo evento de alguien que seguís',
-  invitacion_recibida:  'Recibiste una invitación',
+  invitacion_recibida:   'Recibiste una invitación',
 };
 
 function timeAgo(date) {

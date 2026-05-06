@@ -55,6 +55,17 @@ export async function notificarInvitacionRecibida(usuarioId, entidadId) {
   await crear(usuarioId, 'invitacion_recibida', entidadId);
 }
 
+export async function notificarAdminEventoPendiente(eventoId) {
+  const { data: admins } = await supabase
+    .from('usuarios')
+    .select('id')
+    .eq('es_admin', true);
+  if (!admins?.length) return;
+  await supabase.from('notificaciones').insert(
+    admins.map(a => ({ usuario_id: a.id, tipo: 'evento_pendiente', referencia_id: eventoId }))
+  );
+}
+
 export async function listar(usuarioId) {
   const { data, error } = await supabase
     .from('notificaciones')

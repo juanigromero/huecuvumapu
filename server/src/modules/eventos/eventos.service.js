@@ -1,5 +1,5 @@
 import { supabase } from '../../config/db.js';
-import { notificarEventoVinculado } from '../notificaciones/notificaciones.service.js';
+import { notificarEventoVinculado, notificarAdminEventoPendiente } from '../notificaciones/notificaciones.service.js';
 
 async function determinarEstado(iniciador, entidadId) {
   const tabla = iniciador === 'proyecto' ? 'proyectos' : 'espacios';
@@ -74,6 +74,9 @@ export async function crear(body, usuarioId) {
 
   await crearConfirmacion(evento.id, iniciador, proyecto_id, espacio_id);
   await notificarEventoVinculado(evento, usuarioId);
+  if (evento.estado_publicacion === 'pendiente_moderacion') {
+    await notificarAdminEventoPendiente(evento.id);
+  }
 
   return { ...evento, categorias };
 }
