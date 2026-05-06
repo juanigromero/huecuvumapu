@@ -56,12 +56,6 @@ export default function EspacioPerfil() {
           {espacio.descripcion && <p className={styles.bio}>{espacio.descripcion}</p>}
           {espacio.direccion && <p className={styles.direccion}>📍 {espacio.direccion}</p>}
           {espacio.verificado && <span className={styles.verificado}>espacio verificado</span>}
-          <div className={styles.stats}>
-            <div className={styles.stat}>
-              <span className={styles.statNum}>{espacio.eventos_aprobados}</span>
-              <span className={styles.statLabel}>eventos</span>
-            </div>
-          </div>
         </div>
 
         <div className={styles.sidebar}>

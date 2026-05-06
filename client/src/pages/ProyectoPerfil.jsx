@@ -59,12 +59,6 @@ export default function ProyectoPerfil() {
             {proyecto.tipo && <Tag label={proyecto.tipo.replace('_', ' ')} />}
             {(proyecto.categorias || []).map(c => <Tag key={c} label={c} />)}
           </div>
-          <div className={styles.stats}>
-            <div className={styles.stat}>
-              <span className={styles.statNum}>{proyecto.eventos_aprobados}</span>
-              <span className={styles.statLabel}>eventos</span>
-            </div>
-          </div>
         </div>
 
         <div className={styles.sidebar}>
