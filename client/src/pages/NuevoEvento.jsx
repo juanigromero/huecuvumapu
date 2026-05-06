@@ -287,16 +287,29 @@ export default function NuevoEvento() {
                   <label className={styles.direccionManualLabel}>
                     ¿No lo encontrás? Ingresá la dirección para que aparezca en el mapa:
                   </label>
-                  <input
-                    className={styles.input}
-                    placeholder="Ej: Belgrano 476"
-                    value={direccionManual}
-                    onChange={e => { setDireccionManual(e.target.value); setGeocodingManual(null); setForm(f => ({ ...f, lat: null, lng: null })); }}
-                    onBlur={() => geocodificarDireccionManual(direccionManual)}
-                  />
-                  {geocodingManual === 'buscando' && <span className={styles.hint}>Buscando...</span>}
+                  <div className={styles.direccionManualRow}>
+                    <input
+                      className={styles.input}
+                      placeholder="Ej: Belgrano 249"
+                      value={direccionManual}
+                      onChange={e => {
+                        setDireccionManual(e.target.value);
+                        setGeocodingManual(null);
+                        setForm(f => ({ ...f, lat: null, lng: null, espacio_texto: busqueda }));
+                      }}
+                      onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), geocodificarDireccionManual(direccionManual))}
+                    />
+                    <button
+                      type="button"
+                      className={styles.btnBuscarDir}
+                      onClick={() => geocodificarDireccionManual(direccionManual)}
+                      disabled={!direccionManual.trim() || geocodingManual === 'buscando'}
+                    >
+                      {geocodingManual === 'buscando' ? '...' : 'buscar'}
+                    </button>
+                  </div>
                   {geocodingManual === 'ok' && <span className={styles.hintOk}>✓ Ubicación encontrada — va a aparecer en el mapa</span>}
-                  {geocodingManual === 'no_encontrado' && <span className={styles.hintWarn}>No encontramos esa dirección. El evento se guarda igual.</span>}
+                  {geocodingManual === 'no_encontrado' && <span className={styles.hintWarn}>No encontramos esa dirección. El evento se guarda igual sin ubicación.</span>}
                 </div>
               )}
             </div>
