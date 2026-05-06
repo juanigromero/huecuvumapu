@@ -80,11 +80,10 @@ export default function NuevoEvento() {
   }
 
   function elegirLugarNominatim(lugar) {
-    // Usamos lo que el usuario escribió como nombre, Nominatim solo aporta las coordenadas
-    setSeleccion({ tipo: 'lugar', ...lugar, nombre: busqueda });
-    setBusqueda(busqueda);
+    setSeleccion({ tipo: 'lugar', ...lugar });
+    setBusqueda(lugar.nombre);
     setEspaciosRegistrados([]);
-    setForm(f => ({ ...f, espacio_id: '', espacio_texto: busqueda, lat: lugar.lat, lng: lugar.lng }));
+    setForm(f => ({ ...f, espacio_id: '', espacio_texto: lugar.nombre, lat: lugar.lat, lng: lugar.lng }));
   }
 
   function limpiarSeleccion() {
