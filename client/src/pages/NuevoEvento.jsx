@@ -25,6 +25,8 @@ export default function NuevoEvento() {
   const [espaciosRegistrados, setEspaciosRegistrados] = useState([]);
   const [seleccion, setSeleccion] = useState(null); // { tipo: 'registrado'|'lugar', ...datos }
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [direccionManual, setDireccionManual] = useState('');
+  const [geocodingManual, setGeocodingManual] = useState(null); // null | 'buscando' | 'ok' | 'no_encontrado'
 
   const { resultados: sugerenciasNominatim, buscando: buscandoNominatim } = useNominatim(
     seleccion ? '' : busqueda
@@ -91,8 +93,30 @@ export default function NuevoEvento() {
   function limpiarSeleccion() {
     setSeleccion(null);
     setBusqueda('');
+    setDireccionManual('');
+    setGeocodingManual(null);
     setForm(f => ({ ...f, espacio_id: '', espacio_texto: '', lat: null, lng: null }));
     setDropdownVisible(true);
+  }
+
+  async function geocodificarDireccionManual(direccion) {
+    if (!direccion.trim()) return;
+    setGeocodingManual('buscando');
+    try {
+      const q = encodeURIComponent(`${direccion}, Bahía Blanca, Argentina`);
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
+        headers: { 'Accept-Language': 'es' },
+      });
+      const data = await res.json();
+      if (data.length > 0) {
+        setForm(f => ({ ...f, lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) }));
+        setGeocodingManual('ok');
+      } else {
+        setGeocodingManual('no_encontrado');
+      }
+    } catch {
+      setGeocodingManual('no_encontrado');
+    }
   }
 
   async function handleSubmit(evt) {
@@ -254,6 +278,25 @@ export default function NuevoEvento() {
                       )}
                     </div>
                   )}
+                </div>
+              )}
+
+              {/* Campo de dirección manual cuando no hay selección del dropdown */}
+              {!seleccion && busqueda.length > 0 && (
+                <div className={styles.direccionManualWrap}>
+                  <label className={styles.direccionManualLabel}>
+                    ¿No lo encontrás? Ingresá la dirección para que aparezca en el mapa:
+                  </label>
+                  <input
+                    className={styles.input}
+                    placeholder="Ej: Belgrano 476"
+                    value={direccionManual}
+                    onChange={e => { setDireccionManual(e.target.value); setGeocodingManual(null); setForm(f => ({ ...f, lat: null, lng: null })); }}
+                    onBlur={() => geocodificarDireccionManual(direccionManual)}
+                  />
+                  {geocodingManual === 'buscando' && <span className={styles.hint}>Buscando...</span>}
+                  {geocodingManual === 'ok' && <span className={styles.hintOk}>✓ Ubicación encontrada — va a aparecer en el mapa</span>}
+                  {geocodingManual === 'no_encontrado' && <span className={styles.hintWarn}>No encontramos esa dirección. El evento se guarda igual.</span>}
                 </div>
               )}
             </div>
