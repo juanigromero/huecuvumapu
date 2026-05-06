@@ -19,12 +19,16 @@ function mapearPhoton(r) {
 export function useNominatim(query) {
   const [resultados, setResultados] = useState([]);
   const [buscando, setBuscando] = useState(false);
+  // activo = true desde que hay query hasta que llegan los resultados (incluye el debounce)
+  const [activo, setActivo] = useState(false);
 
   useEffect(() => {
-    if (!query || query.length < 2) { setResultados([]); return; }
+    if (!query || query.length < 2) { setResultados([]); setActivo(false); return; }
 
-    setBuscando(true);
+    setActivo(true);
+    setBuscando(false);
     const t = setTimeout(async () => {
+      setBuscando(true);
       try {
         const params = new URLSearchParams({
           q: query,
@@ -53,11 +57,12 @@ export function useNominatim(query) {
         setResultados([]);
       } finally {
         setBuscando(false);
+        setActivo(false);
       }
     }, 400);
 
     return () => clearTimeout(t);
   }, [query]);
 
-  return { resultados, buscando };
+  return { resultados, buscando: buscando || activo };
 }
