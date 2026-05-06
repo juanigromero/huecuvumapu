@@ -17,12 +17,6 @@ export default function EventoCard({ evento, index }) {
       {evento.imagen_url && (
         <div className={styles.bgImagen} style={{ backgroundImage: `url(${evento.imagen_url})` }} />
       )}
-      <span className={styles.num}>{String(index + 1).padStart(2, '0')}</span>
-
-      <div className={styles.top}>
-        <span className={styles.fecha}>{formatFecha(evento.fecha)}</span>
-        {evento.hora && <span className={styles.hora}>{evento.hora.slice(0, 5)}h</span>}
-      </div>
 
       <div className={styles.tags}>
         {categorias.map(c => <Tag key={c} label={c} />)}
@@ -30,6 +24,11 @@ export default function EventoCard({ evento, index }) {
       </div>
 
       <h3 className={styles.titulo}>{evento.titulo}</h3>
+
+      <div className={styles.fechaHora}>
+        <span className={styles.fecha}>{formatFecha(evento.fecha)}</span>
+        {evento.hora && <span className={styles.hora}>{evento.hora.slice(0, 5)}h</span>}
+      </div>
 
       <div className={styles.meta}>
         {espacio && <span className={styles.lugar}>{espacio.nombre}{espacio.ciudad ? `, ${espacio.ciudad}` : ''}</span>}
