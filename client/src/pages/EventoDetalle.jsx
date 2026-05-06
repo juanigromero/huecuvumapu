@@ -122,12 +122,6 @@ export default function EventoDetalle() {
             </div>
           )}
 
-          {/* LINK EXTERNO */}
-          {evento.link_externo && (
-            <a href={evento.link_externo} target="_blank" rel="noopener noreferrer" className={styles.linkExterno}>
-              Conseguir entradas →
-            </a>
-          )}
 
           {/* MAPA si tiene ubicación */}
           {lat && lng && (
@@ -177,6 +171,11 @@ export default function EventoDetalle() {
           <div className={styles.sideBlock}>
             <span className={styles.sideLabel}>Entrada</span>
             <EntradaBadge entrada={evento.entrada} />
+            {evento.link_externo && (
+              <a href={evento.link_externo} target="_blank" rel="noopener noreferrer" className={styles.linkExterno}>
+                Conseguir entradas →
+              </a>
+            )}
           </div>
 
           {/* PROYECTO */}
