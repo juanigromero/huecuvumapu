@@ -332,7 +332,7 @@ export default function NuevoEvento() {
                     <MapaPicker
                       lat={form.lat}
                       lng={form.lng}
-                      onChange={(lat, lng) => setForm(f => ({ ...f, lat, lng, espacio_texto: busqueda }))}
+                      onChange={(lat, lng, dir) => setForm(f => ({ ...f, lat, lng, espacio_texto: busqueda, espacio_direccion: dir || '' }))}
                     />
                   )}
                 </div>
