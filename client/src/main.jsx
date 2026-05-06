@@ -7,24 +7,17 @@ import { supabase } from './lib/supabase';
 import App from './App.jsx';
 import './index.css';
 
-// Supabase maneja el refresh del token automáticamente.
-// Cada vez que cambia la sesión (login, logout, refresh), sincronizamos Redux.
-supabase.auth.onAuthStateChange(async (_event, session) => {
-  if (session) {
-    // Obtener el perfil del usuario de nuestra tabla
-    const { data: usuario } = await supabase
-      .from('usuarios')
-      .select('*')
-      .eq('id', session.user.id)
-      .single();
-
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'TOKEN_REFRESHED' && session) {
+    // Solo actualizamos el token, mantenemos el user de Redux
     store.dispatch(setCredentials({
       token: session.access_token,
-      user: usuario || session.user,
+      user: store.getState().auth.user,
     }));
-  } else {
+  } else if (event === 'SIGNED_OUT') {
     store.dispatch(logout());
   }
+  // INITIAL_SESSION y SIGNED_IN los maneja login/register manualmente
 });
 
 createRoot(document.getElementById('root')).render(
