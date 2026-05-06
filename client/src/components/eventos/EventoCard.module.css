@@ -9,10 +9,21 @@
   color: #111;
   transition: background 0.15s;
   min-height: 200px;
+  overflow: hidden;
 }
 
-.card:hover {
-  background: #eee8d8;
+.card:hover { background: #eee8d8; }
+
+/* Imagen borrosa de fondo */
+.bgImagen {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(18px) saturate(0.7);
+  opacity: 0.22;
+  transform: scale(1.08); /* evita bordes blancos por el blur */
+  pointer-events: none;
 }
 
 .num {

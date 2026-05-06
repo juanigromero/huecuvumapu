@@ -14,6 +14,9 @@ export default function EventoCard({ evento, index }) {
 
   return (
     <Link to={`/eventos/${evento.id}`} className={styles.card}>
+      {evento.imagen_url && (
+        <div className={styles.bgImagen} style={{ backgroundImage: `url(${evento.imagen_url})` }} />
+      )}
       <span className={styles.num}>{String(index + 1).padStart(2, '0')}</span>
 
       <div className={styles.top}>
