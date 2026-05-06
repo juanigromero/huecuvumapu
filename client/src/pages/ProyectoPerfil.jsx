@@ -37,18 +37,16 @@ export default function ProyectoPerfil() {
             <Link to={`/p/${proyecto.handle}/editar`} className={styles.btnEditar}>Editar perfil</Link>
           </div>
         )}
-      </div>
-
-      <div className={styles.identity}>
-        {proyecto.avatar_url
-          ? <img src={proyecto.avatar_url} alt={proyecto.nombre} className={styles.avatar} />
-          : <div className={styles.avatarPlaceholder}>{proyecto.nombre[0].toUpperCase()}</div>
-        }
-        <div className={styles.identityTexto}>
-          <h1 className={styles.nombre}>{proyecto.nombre}</h1>
-          <span className={styles.handleCiudad}>
-            @{proyecto.handle}{proyecto.ciudad ? ` · ${proyecto.ciudad}` : ''}
-          </span>
+        <div className={styles.identity}>
+          {proyecto.avatar_url && (
+            <img src={proyecto.avatar_url} alt={proyecto.nombre} className={styles.avatar} />
+          )}
+          <div className={styles.identityTexto}>
+            <h1 className={styles.nombre}>{proyecto.nombre}</h1>
+            <span className={styles.handleCiudad}>
+              @{proyecto.handle}{proyecto.ciudad ? ` · ${proyecto.ciudad}` : ''}
+            </span>
+          </div>
         </div>
       </div>
 

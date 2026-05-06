@@ -36,18 +36,16 @@ export default function EspacioPerfil() {
             <Link to={`/e/${espacio.handle}/editar`} className={styles.btnEditar}>Editar perfil</Link>
           </div>
         )}
-      </div>
-
-      <div className={styles.identity}>
-        {espacio.avatar_url
-          ? <img src={espacio.avatar_url} alt={espacio.nombre} className={styles.avatar} />
-          : <div className={styles.avatarPlaceholder}>{espacio.nombre[0].toUpperCase()}</div>
-        }
-        <div className={styles.identityTexto}>
-          <h1 className={styles.nombre}>{espacio.nombre}</h1>
-          <span className={styles.handleCiudad}>
-            {espacio.handle ? `@${espacio.handle}` : ''}{espacio.ciudad ? ` · ${espacio.ciudad}` : ''}
-          </span>
+        <div className={styles.identity}>
+          {espacio.avatar_url && (
+            <img src={espacio.avatar_url} alt={espacio.nombre} className={styles.avatar} />
+          )}
+          <div className={styles.identityTexto}>
+            <h1 className={styles.nombre}>{espacio.nombre}</h1>
+            <span className={styles.handleCiudad}>
+              {espacio.handle ? `@${espacio.handle}` : ''}{espacio.ciudad ? ` · ${espacio.ciudad}` : ''}
+            </span>
+          </div>
         </div>
       </div>
 
