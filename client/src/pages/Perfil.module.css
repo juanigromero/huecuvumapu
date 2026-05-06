@@ -13,7 +13,7 @@
 /* COVER — fusión imagen + identidad al estilo Spotify */
 .cover {
   position: relative;
-  height: 300px;
+  height: clamp(300px, 40vw, 480px);
   background: #1a1a1a;
   background-size: cover;
   background-position: center center;
