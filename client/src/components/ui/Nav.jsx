@@ -28,7 +28,7 @@ export default function Nav() {
             <button onClick={handleLogout} className={styles.btnLogout}>salir</button>
           </>
         ) : (
-          <Link to="/login" className={styles.linkAccent}>sumate</Link>
+          <Link to="/login" className={styles.linkAccent}>entrá</Link>
         )}
       </div>
     </nav>
