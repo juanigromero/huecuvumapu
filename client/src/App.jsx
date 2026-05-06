@@ -10,6 +10,7 @@ import CrearProyecto from './pages/CrearProyecto';
 import CrearEspacio from './pages/CrearEspacio';
 import Mapa from './pages/Mapa';
 import AceptarInvitacion from './pages/AceptarInvitacion';
+import EventoDetalle from './pages/EventoDetalle';
 import Admin from './pages/Admin';
 import AdminRoute from './components/ui/AdminRoute';
 import ProtectedRoute from './components/ui/ProtectedRoute';
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/e/:handle" element={<EspacioPerfil />} />
         <Route path="/mapa" element={<Mapa />} />
         <Route path="/invitacion/:token" element={<AceptarInvitacion />} />
+        <Route path="/eventos/:id" element={<EventoDetalle />} />
         <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
         <Route
           path="/dashboard"
