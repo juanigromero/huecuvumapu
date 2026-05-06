@@ -301,58 +301,34 @@ export default function NuevoEvento() {
                     ¿No lo encontrás? Ingresá la dirección o marcá en el mapa:
                   </label>
 
-                  {/* Si ya tiene ubicación → mostrar sutil con opción de cambiar */}
-                  {form.lat && form.lng ? (
-                    <div className={styles.ubicacionConfirmada}>
-                      <div className={styles.ubicacionInfo}>
-                        <span className={styles.ubicacionBadge}>ubicación</span>
-                        <strong className={styles.ubicacionDireccion}>
-                          {direccionManual || `${form.lat.toFixed(5)}, ${form.lng.toFixed(5)}`}
-                        </strong>
-                      </div>
-                      <button
-                        type="button"
-                        className={styles.seleccionCambiar}
-                        onClick={() => {
-                          setDireccionManual('');
-                          setGeocodingManual(null);
-                          setForm(f => ({ ...f, lat: null, lng: null }));
-                        }}
-                      >cambiar</button>
-                    </div>
-                  ) : (
-                    <>
-                      <div className={styles.direccionManualRow}>
-                        <input
-                          className={styles.input}
-                          placeholder="Ej: Belgrano 249"
-                          value={direccionManual}
-                          onChange={e => {
-                            setDireccionManual(e.target.value);
-                            setGeocodingManual(null);
-                            setForm(f => ({ ...f, lat: null, lng: null, espacio_texto: busqueda }));
-                          }}
-                          onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), geocodificarDireccionManual(direccionManual))}
-                        />
-                        <button
-                          type="button"
-                          className={styles.btnBuscarDir}
-                          onClick={() => geocodificarDireccionManual(direccionManual)}
-                          disabled={!direccionManual.trim() || geocodingManual === 'buscando'}
-                        >
-                          {geocodingManual === 'buscando' ? '...' : 'buscar'}
-                        </button>
-                      </div>
-                      <MapaPicker
-                        lat={form.lat}
-                        lng={form.lng}
-                        onChange={(lat, lng, dir) => {
-                          setDireccionManual(dir || '');
-                          setForm(f => ({ ...f, lat, lng, espacio_texto: busqueda }));
-                        }}
-                      />
-                    </>
-                  )}
+                  <div className={styles.direccionManualRow}>
+                    <input
+                      className={styles.input}
+                      placeholder="Ej: Belgrano 249"
+                      value={direccionManual}
+                      onChange={e => {
+                        setDireccionManual(e.target.value);
+                        setGeocodingManual(null);
+                        setForm(f => ({ ...f, lat: null, lng: null, espacio_texto: busqueda }));
+                      }}
+                      onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), geocodificarDireccionManual(direccionManual))}
+                    />
+                    <button
+                      type="button"
+                      className={styles.btnBuscarDir}
+                      onClick={() => geocodificarDireccionManual(direccionManual)}
+                      disabled={!direccionManual.trim() || geocodingManual === 'buscando'}
+                    >
+                      {geocodingManual === 'buscando' ? '...' : 'buscar'}
+                    </button>
+                  </div>
+
+                  {/* Mapa siempre visible — con pin si ya geocodificó, vacío si no */}
+                  <MapaPicker
+                    lat={form.lat}
+                    lng={form.lng}
+                    onChange={(lat, lng, dir) => setForm(f => ({ ...f, lat, lng, espacio_texto: busqueda, espacio_direccion: dir || '' }))}
+                  />
                 </div>
               )}
             </div>

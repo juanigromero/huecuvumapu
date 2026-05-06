@@ -241,36 +241,6 @@
 
 .seleccionCambiar:hover { color: #111; }
 
-.ubicacionConfirmada {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  border: 1.5px solid #111;
-  padding: 0.75rem 1rem;
-  background: #f5f0e8;
-}
-
-.ubicacionInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.ubicacionBadge {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #555;
-}
-
-.ubicacionDireccion {
-  font-size: 14px;
-  font-weight: 700;
-  color: #111;
-}
-
 .direccionManualWrap {
   display: flex;
   flex-direction: column;
