@@ -6,6 +6,7 @@ import SectionBar from '../components/ui/SectionBar';
 import EventoCard from '../components/eventos/EventoCard';
 import Tag from '../components/ui/Tag';
 import { listarEventos } from '../services/eventosService';
+import { generarSVG } from '../utils/svgAbstracto';
 import styles from './Home.module.css';
 
 function formatFechaHero(fecha) {
@@ -58,10 +59,11 @@ export default function Home() {
             <Link to={`/eventos/${destacado.id}`} className={styles.heroBtn}>Ver evento</Link>
           </div>
           <div className={styles.heroImagen}>
-            {destacado.imagen_url
-              ? <img src={destacado.imagen_url} alt={destacado.titulo} className={styles.heroImg} />
-              : <div className={styles.heroPlaceholder}><span>{destacado.titulo}</span></div>
-            }
+            <img
+              src={destacado.imagen_url || generarSVG(destacado.id, 800, 480)}
+              alt={destacado.titulo}
+              className={styles.heroImg}
+            />
           </div>
         </section>
       )}
