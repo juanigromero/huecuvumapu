@@ -6,16 +6,20 @@
   padding: 0.4rem 0;
 }
 
-.inner {
+.track {
   display: flex;
-  gap: 0;
-  white-space: nowrap;
-  animation: scroll 22s linear infinite;
+  width: max-content;
+  animation: scroll 24s linear infinite;
 }
 
 @keyframes scroll {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
+}
+
+.group {
+  display: flex;
+  flex-shrink: 0;
 }
 
 .item {
@@ -25,6 +29,7 @@
   text-transform: uppercase;
   color: #111;
   padding: 0 1rem;
+  white-space: nowrap;
 }
 
 .sep {
