@@ -25,8 +25,6 @@ export default function NuevoEvento() {
   const [busqueda, setBusqueda] = useState('');
   const [espaciosRegistrados, setEspaciosRegistrados] = useState([]);
   const [seleccion, setSeleccion] = useState(null);
-  const [direccionManual, setDireccionManual] = useState('');
-  const [geocodingManual, setGeocodingManual] = useState(null); // null | 'buscando' | 'ok' | 'no_encontrado'
 
   const { resultados: sugerenciasNominatim, buscando: buscandoNominatim, terminado: busquedaTerminada } = useNominatim(
     seleccion ? '' : busqueda
@@ -91,29 +89,7 @@ export default function NuevoEvento() {
   function limpiarSeleccion() {
     setSeleccion(null);
     setBusqueda('');
-    setDireccionManual('');
-    setGeocodingManual(null);
     setForm(f => ({ ...f, espacio_id: '', espacio_texto: '', lat: null, lng: null }));
-  }
-
-  async function geocodificarDireccionManual(direccion) {
-    if (!direccion.trim()) return;
-    setGeocodingManual('buscando');
-    try {
-      const q = encodeURIComponent(`${direccion}, Bahía Blanca, Argentina`);
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
-        headers: { 'Accept-Language': 'es' },
-      });
-      const data = await res.json();
-      if (data.length > 0) {
-        setForm(f => ({ ...f, lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) }));
-        setGeocodingManual('ok');
-      } else {
-        setGeocodingManual('no_encontrado');
-      }
-    } catch {
-      setGeocodingManual('no_encontrado');
-    }
   }
 
   async function handleSubmit(evt) {
@@ -291,40 +267,16 @@ export default function NuevoEvento() {
                 </div>
               )}
 
-              {/* Ubicación cuando el lugar no está en el dropdown */}
+              {/* Sin resultados → mapa para ubicar manualmente */}
               {!seleccion && busquedaTerminada && sugerenciasNominatim.length === 0 && espaciosRegistrados.length === 0 && (
-                <div className={styles.direccionManualWrap}>
-                  <label className={styles.direccionManualLabel}>
-                    ¿No lo encontrás? Ingresá la dirección o marcá en el mapa:
-                  </label>
-
-                  <div className={`${styles.direccionManualRow} ${form.lat && form.lng ? styles.direccionManualRowSutil : ''}`}>
-                    <input
-                      className={`${styles.input} ${form.lat && form.lng ? styles.inputSutil : ''}`}
-                      placeholder="Ej: Belgrano 249"
-                      value={direccionManual}
-                      onChange={e => {
-                        setDireccionManual(e.target.value);
-                        setGeocodingManual(null);
-                        setForm(f => ({ ...f, lat: null, lng: null, espacio_texto: busqueda }));
-                      }}
-                      onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), geocodificarDireccionManual(direccionManual))}
-                    />
-                    <button
-                      type="button"
-                      className={styles.btnBuscarDir}
-                      onClick={() => geocodificarDireccionManual(direccionManual)}
-                      disabled={!direccionManual.trim() || geocodingManual === 'buscando'}
-                    >
-                      {geocodingManual === 'buscando' ? '...' : 'buscar'}
-                    </button>
-                  </div>
-
-                  {/* Mapa siempre visible — con pin si ya geocodificó, vacío si no */}
+                <div className={styles.sinResultados}>
+                  <p className={styles.sinResultadosTexto}>
+                    No encontramos ese lugar. Marcá la ubicación en el mapa o buscá por dirección.
+                  </p>
                   <MapaPicker
                     lat={form.lat}
                     lng={form.lng}
-                    onChange={(lat, lng, dir) => setForm(f => ({ ...f, lat, lng, espacio_texto: busqueda, espacio_direccion: dir || '' }))}
+                    onChange={(lat, lng, dir) => setForm(f => ({ ...f, lat, lng, espacio_texto: busqueda }))}
                   />
                 </div>
               )}

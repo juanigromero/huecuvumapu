@@ -241,60 +241,17 @@
 
 .seleccionCambiar:hover { color: #111; }
 
-.direccionManualWrap {
+.sinResultados {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  margin-top: 0.75rem;
-  padding: 0.85rem 1rem;
-  border: 1.5px dashed #111;
-  background: #f5e8d0;
+  margin-top: 0.5rem;
 }
 
-.direccionManualLabel {
+.sinResultadosTexto {
   font-size: 12px;
-  font-weight: 700;
-  color: #4a2a0a;
-  letter-spacing: 0.02em;
-}
-
-.direccionManualLabel::before {
-  content: '↓ ';
-}
-
-.direccionManualRow {
-  display: flex;
-  gap: 0;
-}
-
-.direccionManualRow .input {
-  border-right: none;
-}
-
-.btnBuscarDir {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 0 1rem;
-  background: #111;
-  color: #f5f0e8;
-  border: 1.5px solid #111;
-  cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.btnBuscarDir:hover:not(:disabled) { background: #333; }
-.btnBuscarDir:disabled { opacity: 0.4; cursor: not-allowed; }
-
-.direccionManualRowSutil { opacity: 0.4; }
-.direccionManualRowSutil:focus-within { opacity: 1; }
-
-.inputSutil {
-  background: transparent;
-  border-color: #ccc;
+  color: #777;
+  margin: 0;
 }
 
 .hintOk {
