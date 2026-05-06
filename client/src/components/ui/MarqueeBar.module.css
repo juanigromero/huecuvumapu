@@ -8,8 +8,8 @@
 
 .track {
   display: flex;
-  width: max-content;
   animation: scroll 24s linear infinite;
+  will-change: transform;
 }
 
 @keyframes scroll {
@@ -20,6 +20,7 @@
 .group {
   display: flex;
   flex-shrink: 0;
+  min-width: 100vw; /* cada grupo ocupa al menos el ancho de pantalla — sin gaps */
 }
 
 .item {
@@ -28,11 +29,10 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #111;
-  padding: 0 1rem;
+  padding: 0 1.25rem;
   white-space: nowrap;
 }
 
 .sep {
-  margin-left: 1rem;
   opacity: 0.4;
 }
