@@ -15,27 +15,53 @@ function formatFechaHero(fecha) {
 }
 
 const CATEGORIAS = [
-  { key: 'musica', label: 'Música', desc: 'Bandas, solistas, electrónica, folklore y más.' },
-  { key: 'visual', label: 'Artes visuales', desc: 'Exposiciones, intervenciones, fotografía.' },
-  { key: 'teatro', label: 'Teatro', desc: 'Teatro independiente, danza, performance.' },
-  { key: 'popular', label: 'Cultura popular', desc: 'Fiestas, feria, circo, carnaval.' },
+  { key: 'musica', label: 'Música' },
+  { key: 'visual', label: 'Artes visuales' },
+  { key: 'teatro', label: 'Teatro' },
+  { key: 'popular', label: 'Cultura popular' },
+];
+
+function getRangoFecha(periodo) {
+  const hoy = new Date();
+  const fmt = d => d.toISOString().split('T')[0];
+  if (periodo === 'hoy') return { desde: fmt(hoy), hasta: fmt(hoy) };
+  if (periodo === 'semana') {
+    const fin = new Date(hoy); fin.setDate(hoy.getDate() + 7);
+    return { desde: fmt(hoy), hasta: fmt(fin) };
+  }
+  if (periodo === 'mes') {
+    const fin = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+    return { desde: fmt(hoy), hasta: fmt(fin) };
+  }
+  return { desde: fmt(hoy), hasta: null };
+}
+
+const PERIODOS = [
+  { key: 'todos', label: 'Próximos' },
+  { key: 'hoy', label: 'Hoy' },
+  { key: 'semana', label: 'Esta semana' },
+  { key: 'mes', label: 'Este mes' },
 ];
 
 export default function Home() {
   const [eventos, setEventos] = useState([]);
-  const [filtro, setFiltro] = useState('');
+  const [filtroCategoria, setFiltroCategoria] = useState('');
+  const [filtroPeriodo, setFiltroPeriodo] = useState('todos');
+  const [fechaCustom, setFechaCustom] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    listarEventos().then(setEventos).finally(() => setLoading(false));
-  }, []);
+    setLoading(true);
+    const { desde, hasta } = getRangoFecha(filtroPeriodo);
+    const params = { fecha_desde: fechaCustom || desde };
+    if (fechaCustom) params.fecha_hasta = fechaCustom;
+    else if (hasta) params.fecha_hasta = hasta;
+    listarEventos(params).then(setEventos).finally(() => setLoading(false));
+  }, [filtroPeriodo, fechaCustom]);
 
   const hoy = new Date().toISOString().split('T')[0];
-  const proximos = eventos
-    .filter(e => e.fecha >= hoy)
-    .filter(e => !filtro || e.categorias?.includes(filtro));
-
-  const destacado = eventos.find(e => e.destacado && e.fecha >= hoy) || proximos[0];
+  const proximos = eventos.filter(e => !filtroCategoria || e.categorias?.includes(filtroCategoria));
+  const destacado = eventos.find(e => e.destacado) || eventos[0];
   const grilla = proximos.filter(e => e.id !== destacado?.id).slice(0, 9);
 
   return (
@@ -68,19 +94,41 @@ export default function Home() {
         </section>
       )}
 
-      {/* FILTROS DE CATEGORÍA */}
+      {/* FILTROS */}
       <div className={styles.filtros}>
-        <button
-          className={`${styles.filtroBtn} ${!filtro ? styles.filtroBtnActivo : ''}`}
-          onClick={() => setFiltro('')}
-        >todos</button>
-        {CATEGORIAS.map(c => (
+        {/* Categoría */}
+        <div className={styles.filtrosGrupo}>
           <button
-            key={c.key}
-            className={`${styles.filtroBtn} ${filtro === c.key ? styles.filtroBtnActivo : ''}`}
-            onClick={() => setFiltro(filtro === c.key ? '' : c.key)}
-          >{c.label}</button>
-        ))}
+            className={`${styles.filtroBtn} ${!filtroCategoria ? styles.filtroBtnActivo : ''}`}
+            onClick={() => setFiltroCategoria('')}
+          >todos</button>
+          {CATEGORIAS.map(c => (
+            <button key={c.key}
+              className={`${styles.filtroBtn} ${filtroCategoria === c.key ? styles.filtroBtnActivo : ''}`}
+              onClick={() => setFiltroCategoria(filtroCategoria === c.key ? '' : c.key)}
+            >{c.label}</button>
+          ))}
+        </div>
+
+        {/* Separador */}
+        <div className={styles.filtrosSep} />
+
+        {/* Fecha */}
+        <div className={styles.filtrosGrupo}>
+          {PERIODOS.map(p => (
+            <button key={p.key}
+              className={`${styles.filtroBtn} ${filtroPeriodo === p.key && !fechaCustom ? styles.filtroBtnActivo : ''}`}
+              onClick={() => { setFiltroPeriodo(p.key); setFechaCustom(''); }}
+            >{p.label}</button>
+          ))}
+          <input
+            type="date"
+            className={`${styles.filtroFecha} ${fechaCustom ? styles.filtroBtnActivo : ''}`}
+            value={fechaCustom}
+            onChange={e => { setFechaCustom(e.target.value); setFiltroPeriodo(''); }}
+            title="Elegir fecha"
+          />
+        </div>
       </div>
 
       {/* GRILLA */}
@@ -88,22 +136,12 @@ export default function Home() {
       {loading ? (
         <p className={styles.loading}>Cargando...</p>
       ) : proximos.length === 0 ? (
-        <p className={styles.vacio}>No hay eventos próximos.</p>
+        <p className={styles.vacio}>No hay eventos en ese período.</p>
       ) : (
         <div className={styles.grilla}>
           {grilla.map((e, i) => <EventoCard key={e.id} evento={e} index={i} />)}
         </div>
       )}
-
-      {/* STRIP CATEGORÍAS */}
-      <div className={styles.stripCategorias}>
-        {CATEGORIAS.map(c => (
-          <button key={c.key} className={styles.stripCell} onClick={() => setFiltro(c.key)}>
-            <span className={styles.stripLabel}>{c.label}</span>
-            <span className={styles.stripDesc}>{c.desc}</span>
-          </button>
-        ))}
-      </div>
 
       {/* CTA */}
       <section className={styles.cta}>

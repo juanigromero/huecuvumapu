@@ -103,9 +103,21 @@
 /* FILTROS */
 .filtros {
   display: flex;
-  gap: 0;
+  align-items: stretch;
   border-bottom: 1.5px solid #111;
   overflow-x: auto;
+}
+
+.filtrosGrupo {
+  display: flex;
+  align-items: stretch;
+}
+
+.filtrosSep {
+  width: 1.5px;
+  background: #111;
+  margin: 0.4rem 0;
+  flex-shrink: 0;
 }
 
 .filtroBtn {
@@ -123,19 +135,22 @@
   white-space: nowrap;
 }
 
-.filtroBtn:hover {
-  background: #eee8d8;
-  color: #111;
-}
+.filtroBtn:hover { background: #eee8d8; color: #111; }
+.filtroBtnActivo { background: #111; color: #f5f0e8; }
+.filtroBtnActivo:hover { background: #333; color: #f5f0e8; }
 
-.filtroBtnActivo {
-  background: #111;
-  color: #f5f0e8;
-}
-
-.filtroBtnActivo:hover {
-  background: #333;
-  color: #f5f0e8;
+.filtroFecha {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #555;
+  background: none;
+  border: none;
+  border-left: 1px solid #ddd;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  outline: none;
 }
 
 /* GRILLA */
