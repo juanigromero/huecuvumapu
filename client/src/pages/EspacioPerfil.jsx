@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Nav from '../components/ui/Nav';
 import SectionBar from '../components/ui/SectionBar';
@@ -21,6 +21,9 @@ export default function EspacioPerfil() {
   if (!espacio) return <div className={styles.loading}>Cargando...</div>;
 
   const miembros = espacio.espacio_miembros || [];
+  const miembroActual = miembros.find(m => m.usuario_id === user?.id);
+  const esOwner = miembroActual?.rol_interno === 'owner';
+  const esMiembro = !!miembroActual;
 
   return (
     <div className={styles.page}>
@@ -28,13 +31,23 @@ export default function EspacioPerfil() {
 
       <div className={styles.cover} style={espacio.cover_url ? { backgroundImage: `url(${espacio.cover_url})` } : {}}>
         <div className={styles.coverOverlay} />
-        <div className={styles.coverContent}>
-          {espacio.avatar_url && <img src={espacio.avatar_url} alt={espacio.nombre} className={styles.avatar} />}
-          <div>
-            <h1 className={styles.nombre}>{espacio.nombre}</h1>
-            {espacio.handle && <span className={styles.handle}>@{espacio.handle}</span>}
-            {espacio.ciudad && <span className={styles.ciudad}> · {espacio.ciudad}</span>}
+        {esMiembro && (
+          <div className={styles.coverActions}>
+            <Link to={`/e/${espacio.handle}/editar`} className={styles.btnEditar}>Editar perfil</Link>
           </div>
+        )}
+      </div>
+
+      <div className={styles.identity}>
+        {espacio.avatar_url
+          ? <img src={espacio.avatar_url} alt={espacio.nombre} className={styles.avatar} />
+          : <div className={styles.avatarPlaceholder}>{espacio.nombre[0].toUpperCase()}</div>
+        }
+        <div className={styles.identityTexto}>
+          <h1 className={styles.nombre}>{espacio.nombre}</h1>
+          <span className={styles.handleCiudad}>
+            {espacio.handle ? `@${espacio.handle}` : ''}{espacio.ciudad ? ` · ${espacio.ciudad}` : ''}
+          </span>
         </div>
       </div>
 
@@ -43,7 +56,6 @@ export default function EspacioPerfil() {
           {espacio.descripcion && <p className={styles.bio}>{espacio.descripcion}</p>}
           {espacio.direccion && <p className={styles.direccion}>📍 {espacio.direccion}</p>}
           {espacio.verificado && <span className={styles.verificado}>espacio verificado</span>}
-
           <div className={styles.stats}>
             <div className={styles.stat}>
               <span className={styles.statNum}>{espacio.eventos_aprobados}</span>
@@ -68,7 +80,7 @@ export default function EspacioPerfil() {
               </div>
             ))}
           </div>
-          {miembros.find(m => m.usuario_id === user?.id)?.rol_interno === 'owner' && (
+          {esOwner && (
             <>
               <SectionBar label="Invitar miembro" />
               <InvitarMiembro entidad_tipo="espacio" entidad_id={espacio.id} />

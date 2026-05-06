@@ -11,6 +11,9 @@ import CrearEspacio from './pages/CrearEspacio';
 import Mapa from './pages/Mapa';
 import AceptarInvitacion from './pages/AceptarInvitacion';
 import EventoDetalle from './pages/EventoDetalle';
+import EditarProyecto from './pages/EditarProyecto';
+import EditarEspacio from './pages/EditarEspacio';
+import EditarPerfil from './pages/EditarPerfil';
 import Admin from './pages/Admin';
 import AdminRoute from './components/ui/AdminRoute';
 import ProtectedRoute from './components/ui/ProtectedRoute';
@@ -27,6 +30,9 @@ export default function App() {
         <Route path="/mapa" element={<Mapa />} />
         <Route path="/invitacion/:token" element={<AceptarInvitacion />} />
         <Route path="/eventos/:id" element={<EventoDetalle />} />
+        <Route path="/p/:handle/editar" element={<ProtectedRoute><EditarProyecto /></ProtectedRoute>} />
+        <Route path="/e/:handle/editar" element={<ProtectedRoute><EditarEspacio /></ProtectedRoute>} />
+        <Route path="/perfil/editar" element={<ProtectedRoute><EditarPerfil /></ProtectedRoute>} />
         <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
         <Route
           path="/dashboard"

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Nav from '../components/ui/Nav';
 import SectionBar from '../components/ui/SectionBar';
@@ -24,6 +24,7 @@ export default function ProyectoPerfil() {
   const miembros = proyecto.proyecto_miembros || [];
   const miembroActual = miembros.find(m => m.usuario_id === user?.id);
   const esOwner = miembroActual?.rol_interno === 'owner';
+  const esMiembro = !!miembroActual;
 
   return (
     <div className={styles.page}>
@@ -31,13 +32,23 @@ export default function ProyectoPerfil() {
 
       <div className={styles.cover} style={proyecto.cover_url ? { backgroundImage: `url(${proyecto.cover_url})` } : {}}>
         <div className={styles.coverOverlay} />
-        <div className={styles.coverContent}>
-          {proyecto.avatar_url && <img src={proyecto.avatar_url} alt={proyecto.nombre} className={styles.avatar} />}
-          <div>
-            <h1 className={styles.nombre}>{proyecto.nombre}</h1>
-            <span className={styles.handle}>@{proyecto.handle}</span>
-            {proyecto.ciudad && <span className={styles.ciudad}> · {proyecto.ciudad}</span>}
+        {esMiembro && (
+          <div className={styles.coverActions}>
+            <Link to={`/p/${proyecto.handle}/editar`} className={styles.btnEditar}>Editar perfil</Link>
           </div>
+        )}
+      </div>
+
+      <div className={styles.identity}>
+        {proyecto.avatar_url
+          ? <img src={proyecto.avatar_url} alt={proyecto.nombre} className={styles.avatar} />
+          : <div className={styles.avatarPlaceholder}>{proyecto.nombre[0].toUpperCase()}</div>
+        }
+        <div className={styles.identityTexto}>
+          <h1 className={styles.nombre}>{proyecto.nombre}</h1>
+          <span className={styles.handleCiudad}>
+            @{proyecto.handle}{proyecto.ciudad ? ` · ${proyecto.ciudad}` : ''}
+          </span>
         </div>
       </div>
 
@@ -72,7 +83,6 @@ export default function ProyectoPerfil() {
               </div>
             ))}
           </div>
-
           {esOwner && (
             <>
               <SectionBar label="Invitar miembro" />

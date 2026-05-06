@@ -76,9 +76,15 @@ export default function Dashboard() {
       <Nav />
 
       <div className={styles.header}>
-        <div>
-          <h1 className={styles.titulo}>Dashboard</h1>
-          <p className={styles.subtitulo}>{user?.nombre || user?.email}</p>
+        <div className={styles.headerUser}>
+          {user?.avatar_url
+            ? <img src={user.avatar_url} className={styles.headerAvatar} alt="" />
+            : <div className={styles.headerAvatarPlaceholder}>{(user?.nombre || user?.email || '?')[0].toUpperCase()}</div>
+          }
+          <div>
+            <h1 className={styles.titulo}>{user?.nombre || user?.email}</h1>
+            <Link to="/perfil/editar" className={styles.editarPerfil}>Editar perfil</Link>
+          </div>
         </div>
         <Link to="/nuevo-evento" className={styles.btnNuevo}>+ Nuevo evento</Link>
       </div>
