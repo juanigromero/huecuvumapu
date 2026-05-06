@@ -39,6 +39,7 @@ export default function NuevoEvento() {
     espacio_id: '', espacio_texto: '',
     lat: null, lng: null,
     imagen_url: '',
+    info_entradas: '',
     categorias: [],
   });
 
@@ -306,9 +307,15 @@ export default function NuevoEvento() {
               ))}
             </div>
             {form.entrada === 'pago' && (
-              <div className={styles.field} style={{ marginTop: '0.75rem' }}>
-                <label className={styles.label}>Precio ($)</label>
-                <input className={styles.input} name="precio" type="number" min="0" value={form.precio} onChange={handleChange} placeholder="0" style={{ maxWidth: '160px' }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.75rem' }}>
+                <div className={styles.field}>
+                  <label className={styles.label}>Link de entradas</label>
+                  <input className={styles.input} name="link_externo" value={form.link_externo} onChange={handleChange} placeholder="https://passline.com/..." />
+                </div>
+                <div className={styles.field}>
+                  <label className={styles.label}>¿Cómo conseguirlas? <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>(si no hay link)</span></label>
+                  <textarea className={styles.textarea} name="info_entradas" value={form.info_entradas} onChange={handleChange} rows={2} placeholder="Ej: Escribinos al 291 555-1234 o pasá por Av. Colón 123" />
+                </div>
               </div>
             )}
           </fieldset>

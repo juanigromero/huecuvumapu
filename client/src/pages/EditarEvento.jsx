@@ -30,6 +30,7 @@ export default function EditarEvento() {
         hora: e.hora?.slice(0, 5) || '',
         entrada: e.entrada || 'gratuita',
         link_externo: e.link_externo || '',
+        info_entradas: e.info_entradas || '',
         imagen_url: e.imagen_url || '',
         categorias: e.categorias || [],
       });
@@ -132,9 +133,16 @@ export default function EditarEvento() {
           </div>
 
           <div className={styles.field}>
-            <label className={styles.label}>Link externo</label>
-            <input className={styles.input} value={form.link_externo} onChange={e => setForm(f => ({ ...f, link_externo: e.target.value }))} placeholder="https://..." />
+            <label className={styles.label}>Link de entradas</label>
+            <input className={styles.input} value={form.link_externo} onChange={e => setForm(f => ({ ...f, link_externo: e.target.value }))} placeholder="https://passline.com/..." />
           </div>
+
+          {form.entrada === 'pago' && (
+            <div className={styles.field}>
+              <label className={styles.label}>¿Cómo conseguirlas? <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>(si no hay link)</span></label>
+              <textarea className={styles.textarea} value={form.info_entradas} onChange={e => setForm(f => ({ ...f, info_entradas: e.target.value }))} rows={2} placeholder="Ej: Escribinos al 291 555-1234 o pasá por Av. Colón 123" />
+            </div>
+          )}
 
           {error && <p className={styles.error}>{error}</p>}
 

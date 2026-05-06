@@ -174,6 +174,8 @@ export default function EventoDetalle() {
               <a href={evento.link_externo} target="_blank" rel="noopener noreferrer" className={styles.linkExterno}>
                 Conseguir entradas →
               </a>
+            ) : evento.entrada === 'pago' && evento.info_entradas ? (
+              <p className={styles.infoEntradas}>{evento.info_entradas}</p>
             ) : (
               <EntradaBadge entrada={evento.entrada} />
             )}

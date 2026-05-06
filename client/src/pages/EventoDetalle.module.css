@@ -109,6 +109,15 @@
 
 .linkExterno:hover { background: #333; opacity: 1; }
 
+.infoEntradas {
+  font-size: 13px;
+  color: #333;
+  line-height: 1.5;
+  border-left: 2px solid #111;
+  padding-left: 0.6rem;
+  margin: 0;
+}
+
 .mapaWrap {
   border: 1.5px solid #111;
   overflow: hidden;

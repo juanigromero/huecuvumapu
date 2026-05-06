@@ -31,7 +31,7 @@ async function crearConfirmacion(eventoId, iniciador, proyectoId, espacioId) {
 export async function crear(body, usuarioId) {
   const {
     titulo, descripcion, fecha, hora,
-    entrada, precio, imagen_url, link_externo,
+    entrada, precio, imagen_url, link_externo, info_entradas,
     iniciador, proyecto_id, proyecto_texto,
     espacio_id, espacio_texto, lat, lng, categorias = [],
   } = body;
@@ -56,6 +56,7 @@ export async function crear(body, usuarioId) {
     .insert({
       titulo, descripcion, fecha, hora,
       entrada, precio: precio || null, imagen_url, link_externo,
+      info_entradas: info_entradas || null,
       estado_publicacion, iniciador,
       proyecto_id: proyecto_id || null, proyecto_texto: proyecto_texto || null,
       espacio_id: espacio_id || null, espacio_texto: espacio_texto || null,
