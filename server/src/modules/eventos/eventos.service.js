@@ -81,7 +81,7 @@ export async function crear(body, usuarioId) {
   return { ...evento, categorias };
 }
 
-export async function listar({ ciudad, categoria, fecha_desde, fecha_hasta, iniciador } = {}) {
+export async function listar({ ciudad, categoria, fecha_desde, fecha_hasta, iniciador, proyecto_id, espacio_id } = {}) {
   let query = supabase
     .from('eventos')
     .select(`
@@ -96,6 +96,8 @@ export async function listar({ ciudad, categoria, fecha_desde, fecha_hasta, inic
 
   if (fecha_desde) query = query.gte('fecha', fecha_desde);
   if (fecha_hasta) query = query.lte('fecha', fecha_hasta);
+  if (proyecto_id) query = query.eq('proyecto_id', proyecto_id);
+  if (espacio_id) query = query.eq('espacio_id', espacio_id);
   if (iniciador) query = query.eq('iniciador', iniciador);
 
   const { data, error } = await query;

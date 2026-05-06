@@ -4,18 +4,25 @@ import { useSelector } from 'react-redux';
 import Nav from '../components/ui/Nav';
 import SectionBar from '../components/ui/SectionBar';
 import Tag from '../components/ui/Tag';
+import EventoCard from '../components/eventos/EventoCard';
 import InvitarMiembro from '../components/ui/InvitarMiembro';
 import { obtenerProyecto } from '../services/proyectosService';
+import { listarEventos } from '../services/eventosService';
 import styles from './Perfil.module.css';
 
 export default function ProyectoPerfil() {
   const { handle } = useParams();
   const user = useSelector(s => s.auth.user);
   const [proyecto, setProyecto] = useState(null);
+  const [eventos, setEventos] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    obtenerProyecto(handle).then(setProyecto).catch(() => setError('Proyecto no encontrado'));
+    obtenerProyecto(handle).then(p => {
+      setProyecto(p);
+      const hoy = new Date().toISOString().split('T')[0];
+      listarEventos({ proyecto_id: p.id, fecha_desde: hoy }).then(setEventos);
+    }).catch(() => setError('Proyecto no encontrado'));
   }, [handle]);
 
   if (error) return <div className={styles.error}>{error}</div>;
@@ -53,10 +60,20 @@ export default function ProyectoPerfil() {
       <div className={styles.body}>
         <div className={styles.main}>
           {proyecto.bio && <p className={styles.bio}>{proyecto.bio}</p>}
+
           <div className={styles.tags}>
             {proyecto.tipo && <Tag label={proyecto.tipo.replace('_', ' ')} />}
             {(proyecto.categorias || []).map(c => <Tag key={c} label={c} />)}
           </div>
+
+          {eventos.length > 0 && (
+            <div className={styles.eventosSection}>
+              <SectionBar label="Próximos eventos" />
+              <div className={styles.eventosGrid}>
+                {eventos.map((e, i) => <EventoCard key={e.id} evento={e} index={i} />)}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className={styles.sidebar}>
