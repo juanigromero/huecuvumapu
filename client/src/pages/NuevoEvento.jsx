@@ -7,6 +7,7 @@ import { misProyectos } from '../services/proyectosService';
 import { misEspacios, buscarEspacios } from '../services/espaciosService';
 import { crearEvento } from '../services/eventosService';
 import { useNominatim } from '../hooks/useNominatim';
+import MapaPicker from '../components/ui/MapaPicker';
 import styles from './NuevoEvento.module.css';
 
 const CATEGORIAS = ['musica', 'visual', 'teatro', 'popular'];
@@ -121,6 +122,18 @@ export default function NuevoEvento() {
 
   async function handleSubmit(evt) {
     evt.preventDefault();
+
+    // Validar que tenga ubicación
+    const tieneUbicacion =
+      seleccion?.tipo === 'registrado' || // espacio registrado con lat/lng propio
+      (seleccion?.lat && seleccion?.lng) || // lugar de Nominatim/Photon
+      (form.lat && form.lng); // dirección manual o pin en el mapa
+
+    if (!tieneUbicacion) {
+      setError('El evento necesita una ubicación. Usá el mapa para marcar el lugar.');
+      return;
+    }
+
     setEnviando(true);
     setError(null);
     try {
@@ -281,12 +294,13 @@ export default function NuevoEvento() {
                 </div>
               )}
 
-              {/* Campo de dirección manual cuando no hay resultados */}
+              {/* Ubicación cuando el lugar no está en el dropdown */}
               {!seleccion && busqueda.length >= 2 && !buscandoNominatim && sugerenciasNominatim.length === 0 && espaciosRegistrados.length === 0 && (
                 <div className={styles.direccionManualWrap}>
                   <label className={styles.direccionManualLabel}>
-                    ¿No lo encontrás? Ingresá la dirección para que aparezca en el mapa:
+                    ¿No lo encontrás? Ingresá la dirección o marcá en el mapa:
                   </label>
+
                   <div className={styles.direccionManualRow}>
                     <input
                       className={styles.input}
@@ -308,8 +322,19 @@ export default function NuevoEvento() {
                       {geocodingManual === 'buscando' ? '...' : 'buscar'}
                     </button>
                   </div>
-                  {geocodingManual === 'ok' && <span className={styles.hintOk}>✓ Ubicación encontrada — va a aparecer en el mapa</span>}
-                  {geocodingManual === 'no_encontrado' && <span className={styles.hintWarn}>No encontramos esa dirección. El evento se guarda igual sin ubicación.</span>}
+
+                  {geocodingManual === 'ok' && (
+                    <span className={styles.hintOk}>✓ Ubicación encontrada — va a aparecer en el mapa</span>
+                  )}
+
+                  {/* Picker de mapa: si geocoding falla o no intentó */}
+                  {(geocodingManual === 'no_encontrado' || geocodingManual === null) && (
+                    <MapaPicker
+                      lat={form.lat}
+                      lng={form.lng}
+                      onChange={(lat, lng) => setForm(f => ({ ...f, lat, lng, espacio_texto: busqueda }))}
+                    />
+                  )}
                 </div>
               )}
             </div>
