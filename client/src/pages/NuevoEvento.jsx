@@ -149,15 +149,19 @@ export default function NuevoEvento() {
                 </label>
               )}
             </div>
-            {form.iniciador === 'proyecto' && proyectos.length > 1 && (
-              <select name="proyecto_id" value={form.proyecto_id} onChange={handleChange} className={styles.select}>
-                {proyectos.map(p => <option key={p.id} value={p.id}>{p.nombre}</option>)}
-              </select>
+            {form.iniciador === 'proyecto' && (
+              proyectos.length === 1
+                ? <span className={styles.entidadNombre}>{proyectos[0].nombre}</span>
+                : <select name="proyecto_id" value={form.proyecto_id} onChange={handleChange} className={styles.selectSutil}>
+                    {proyectos.map(p => <option key={p.id} value={p.id}>{p.nombre}</option>)}
+                  </select>
             )}
-            {form.iniciador === 'espacio' && espacios.length > 1 && (
-              <select name="espacio_id" value={form.espacio_id} onChange={handleChange} className={styles.select}>
-                {espacios.map(e => <option key={e.id} value={e.id}>{e.nombre}</option>)}
-              </select>
+            {form.iniciador === 'espacio' && (
+              espacios.length === 1
+                ? <span className={styles.entidadNombre}>{espacios[0].nombre}</span>
+                : <select name="espacio_id" value={form.espacio_id} onChange={handleChange} className={styles.selectSutil}>
+                    {espacios.map(e => <option key={e.id} value={e.id}>{e.nombre}</option>)}
+                  </select>
             )}
           </fieldset>
 
