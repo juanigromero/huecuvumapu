@@ -16,24 +16,41 @@
 
 .card:hover { background: #eee8d8; }
 
-/* Gradiente abstracto cuando no hay imagen */
+/* SVG abstracto — sin blur */
 .bgAbstracto {
   position: absolute;
   inset: 0;
-  opacity: 0.45;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.6;
   pointer-events: none;
 }
 
-/* Imagen borrosa de fondo */
+/* Imagen real — borrosa */
 .bgImagen {
   position: absolute;
   inset: 0;
   background-size: cover;
   background-position: center;
   filter: blur(6px) saturate(0.8);
-  opacity: 0.35;
+  opacity: 0.32;
   transform: scale(1.08);
   pointer-events: none;
+}
+
+/* Overlay para garantizar legibilidad del texto */
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(245, 240, 232, 0.52);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.card > *:not(.bgAbstracto):not(.bgImagen) {
+  position: relative;
+  z-index: 1;
 }
 
 .tags {
