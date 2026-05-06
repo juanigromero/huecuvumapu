@@ -289,6 +289,14 @@
 .btnBuscarDir:hover:not(:disabled) { background: #333; }
 .btnBuscarDir:disabled { opacity: 0.4; cursor: not-allowed; }
 
+.direccionManualRowSutil { opacity: 0.4; }
+.direccionManualRowSutil:focus-within { opacity: 1; }
+
+.inputSutil {
+  background: transparent;
+  border-color: #ccc;
+}
+
 .hintOk {
   font-size: 11px;
   color: #0a2a14;

@@ -301,9 +301,9 @@ export default function NuevoEvento() {
                     ¿No lo encontrás? Ingresá la dirección o marcá en el mapa:
                   </label>
 
-                  <div className={styles.direccionManualRow}>
+                  <div className={`${styles.direccionManualRow} ${form.lat && form.lng ? styles.direccionManualRowSutil : ''}`}>
                     <input
-                      className={styles.input}
+                      className={`${styles.input} ${form.lat && form.lng ? styles.inputSutil : ''}`}
                       placeholder="Ej: Belgrano 249"
                       value={direccionManual}
                       onChange={e => {
