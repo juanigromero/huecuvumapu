@@ -21,10 +21,10 @@ function formatFecha(fecha) {
   });
 }
 
-function EntradaBadge({ entrada, precio }) {
+function EntradaBadge({ entrada }) {
   if (entrada === 'gratuita') return <span className={styles.entradaGratis}>entrada libre</span>;
   if (entrada === 'a_la_gorra') return <span className={styles.entradaGorra}>a la gorra</span>;
-  return <span className={styles.entradaPago}>${precio}</span>;
+  return <span className={styles.entradaPago}>con entrada</span>;
 }
 
 function ConfirmacionBadge({ confirmaciones = [], iniciador }) {
@@ -154,7 +154,7 @@ export default function EventoDetalle() {
           {/* ENTRADA */}
           <div className={styles.sideBlock}>
             <span className={styles.sideLabel}>Entrada</span>
-            <EntradaBadge entrada={evento.entrada} precio={evento.precio} />
+            <EntradaBadge entrada={evento.entrada} />
           </div>
 
           {/* PROYECTO */}

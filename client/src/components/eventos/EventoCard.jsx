@@ -36,7 +36,7 @@ export default function EventoCard({ evento, index }) {
       <div className={styles.footer}>
         {proyecto && <span className={styles.proyecto}>{proyecto.nombre}</span>}
         {!proyecto && evento.proyecto_texto && <span className={styles.proyecto}>{evento.proyecto_texto}</span>}
-        <span className={styles.entrada}>{evento.entrada === 'gratuita' ? 'gratis' : evento.entrada === 'a_la_gorra' ? 'a la gorra' : `$${evento.precio}`}</span>
+        <span className={styles.entrada}>{evento.entrada === 'gratuita' ? 'gratis' : evento.entrada === 'a_la_gorra' ? 'a la gorra' : 'con entrada'}</span>
       </div>
     </Link>
   );
