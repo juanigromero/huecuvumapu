@@ -7,6 +7,23 @@ function formatFecha(fecha) {
   return d.toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric', month: 'short' });
 }
 
+// Genera un gradiente abstracto único basado en el id del evento
+const PALETAS = [
+  ['#c8f0d8', '#d0e8f5'],
+  ['#f5d0e8', '#f5e8d0'],
+  ['#d0e8f5', '#c8f0d8'],
+  ['#f5e8d0', '#f5d0e8'],
+  ['#e8d0f5', '#d0e8f5'],
+  ['#f5f0c8', '#c8f0d8'],
+];
+
+function gradienteAbstracto(id) {
+  const idx = id.charCodeAt(0) % PALETAS.length;
+  const [c1, c2] = PALETAS[idx];
+  const angulo = (id.charCodeAt(1) % 4) * 45;
+  return `linear-gradient(${angulo}deg, ${c1} 0%, ${c2} 100%)`;
+}
+
 export default function EventoCard({ evento, index }) {
   const espacio = evento.espacios;
   const proyecto = evento.proyectos;
@@ -14,8 +31,10 @@ export default function EventoCard({ evento, index }) {
 
   return (
     <Link to={`/eventos/${evento.id}`} className={styles.card}>
-      {evento.imagen_url && (
+      {evento.imagen_url ? (
         <div className={styles.bgImagen} style={{ backgroundImage: `url(${evento.imagen_url})` }} />
+      ) : (
+        <div className={styles.bgAbstracto} style={{ background: gradienteAbstracto(evento.id) }} />
       )}
 
       <div className={styles.tags}>
