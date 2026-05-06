@@ -1,0 +1,177 @@
+.page {
+  min-height: 100vh;
+  background: #f5f0e8;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.msg {
+  color: #999;
+  font-size: 14px;
+  text-align: center;
+  padding: 2rem;
+}
+
+.vacio {
+  text-align: center;
+  padding: 3rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.vacio p { font-size: 14px; color: #999; }
+
+.link {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #111;
+  border: 1.5px solid #111;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+}
+
+/* CARD */
+.card {
+  border: 2px solid #111;
+  background: #fff;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.fecha {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #999;
+}
+
+.tags {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.iniciador {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border: 1px solid #ccc;
+  color: #777;
+  white-space: nowrap;
+}
+
+.titulo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111;
+  line-height: 1.15;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.metaItem {
+  font-size: 13px;
+  color: #555;
+}
+
+.descripcion {
+  font-size: 14px;
+  color: #444;
+  line-height: 1.55;
+  border-left: 3px solid #ddd;
+  padding-left: 0.75rem;
+}
+
+.acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-top: 1.5px solid #eee;
+  padding-top: 1rem;
+}
+
+.nota {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  color: #111;
+  background: #f5f0e8;
+  border: 1.5px solid #ddd;
+  padding: 0.6rem 0.85rem;
+  outline: none;
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.nota:focus { border-color: #111; }
+
+.botones {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btnAprobar {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.65rem 1.5rem;
+  background: #c8f0d8;
+  color: #0a2a14;
+  border: 1.5px solid #111;
+  cursor: pointer;
+}
+
+.btnAprobar:hover:not(:disabled) { background: #a8d8b8; }
+
+.btnRechazar {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.65rem 1.5rem;
+  background: transparent;
+  color: #777;
+  border: 1.5px solid #ccc;
+  cursor: pointer;
+}
+
+.btnRechazar:hover:not(:disabled) { border-color: #111; color: #111; }
+
+.btnAprobar:disabled,
+.btnRechazar:disabled { opacity: 0.5; cursor: not-allowed; }

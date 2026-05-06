@@ -23,6 +23,7 @@ export default function Nav() {
         {user ? (
           <>
             <Link to="/dashboard" className={styles.link}>dashboard</Link>
+            {user?.es_admin && <Link to="/admin" className={styles.link}>admin</Link>}
             <button onClick={handleLogout} className={styles.btnLogout}>salir</button>
           </>
         ) : (
