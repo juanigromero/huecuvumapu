@@ -281,8 +281,8 @@ export default function NuevoEvento() {
                 </div>
               )}
 
-              {/* Campo de dirección manual cuando no hay selección del dropdown */}
-              {!seleccion && busqueda.length > 0 && (
+              {/* Campo de dirección manual cuando no hay resultados */}
+              {!seleccion && busqueda.length >= 2 && !buscandoNominatim && sugerenciasNominatim.length === 0 && espaciosRegistrados.length === 0 && (
                 <div className={styles.direccionManualWrap}>
                   <label className={styles.direccionManualLabel}>
                     ¿No lo encontrás? Ingresá la dirección para que aparezca en el mapa:
