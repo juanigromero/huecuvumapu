@@ -67,7 +67,7 @@ export default function EspacioPerfil() {
                 }
                 <div>
                   <span className={styles.miembroNombre}>{m.usuarios?.nombre || 'Usuario'}</span>
-                  <span className={styles.miembroRol}>{m.rol_interno}</span>
+                  {esMiembro && <span className={styles.miembroRol}>{m.rol_interno}</span>}
                 </div>
               </div>
             ))}
