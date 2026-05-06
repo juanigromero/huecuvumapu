@@ -154,6 +154,12 @@
   justify-content: space-between;
   padding: 0.85rem 1.5rem;
   border-bottom: 1px solid #ddd;
+  text-decoration: none;
+  color: inherit;
+}
+
+.eventoRow:hover {
+  background: #eee8d8;
 }
 
 .eventoInfo {

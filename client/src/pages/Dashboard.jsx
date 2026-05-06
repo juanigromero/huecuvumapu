@@ -123,13 +123,13 @@ export default function Dashboard() {
             ) : (
               <div className={styles.eventosList}>
                 {eventos.map(e => (
-                  <div key={e.id} className={styles.eventoRow}>
+                  <Link key={e.id} to={`/eventos/${e.id}`} className={styles.eventoRow}>
                     <div className={styles.eventoInfo}>
                       <span className={styles.eventoFecha}>{formatFecha(e.fecha)}</span>
                       <span className={styles.eventoTitulo}>{e.titulo}</span>
                     </div>
                     {estadoBadge(e.estado_publicacion)}
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}
