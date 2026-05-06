@@ -24,8 +24,7 @@ export default function NuevoEvento() {
 
   const [busqueda, setBusqueda] = useState('');
   const [espaciosRegistrados, setEspaciosRegistrados] = useState([]);
-  const [seleccion, setSeleccion] = useState(null); // { tipo: 'registrado'|'lugar', ...datos }
-  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [seleccion, setSeleccion] = useState(null);
   const [direccionManual, setDireccionManual] = useState('');
   const [geocodingManual, setGeocodingManual] = useState(null); // null | 'buscando' | 'ok' | 'no_encontrado'
 
@@ -80,7 +79,6 @@ export default function NuevoEvento() {
     setBusqueda(esp.nombre);
     setEspaciosRegistrados([]);
     setForm(f => ({ ...f, espacio_id: esp.id, espacio_texto: '', lat: null, lng: null }));
-    setDropdownVisible(false);
   }
 
   function elegirLugarNominatim(lugar) {
@@ -88,7 +86,6 @@ export default function NuevoEvento() {
     setBusqueda(lugar.nombre);
     setEspaciosRegistrados([]);
     setForm(f => ({ ...f, espacio_id: '', espacio_texto: lugar.nombre, lat: lugar.lat, lng: lugar.lng }));
-    setDropdownVisible(false);
   }
 
   function limpiarSeleccion() {
@@ -97,7 +94,6 @@ export default function NuevoEvento() {
     setDireccionManual('');
     setGeocodingManual(null);
     setForm(f => ({ ...f, espacio_id: '', espacio_texto: '', lat: null, lng: null }));
-    setDropdownVisible(true);
   }
 
   async function geocodificarDireccionManual(direccion) {
@@ -257,13 +253,14 @@ export default function NuevoEvento() {
                     className={styles.input}
                     placeholder="Escribí el nombre del lugar..."
                     value={busqueda}
-                    onChange={e => { setBusqueda(e.target.value); setDropdownVisible(true); }}
-                    onFocus={() => busqueda.length >= 2 && setDropdownVisible(true)}
+                    onChange={e => setBusqueda(e.target.value)}
                     autoComplete="off"
                   />
-                  {buscandoNominatim && <span className={styles.buscandoIndicador}>buscando...</span>}
+                  {busqueda.length >= 2 && buscandoNominatim && (
+                    <span className={styles.buscandoIndicador}>buscando...</span>
+                  )}
 
-                  {dropdownVisible && hayResultados && (
+                  {hayResultados && (
                     <div className={styles.dropdown}>
                       {espaciosRegistrados.length > 0 && (
                         <>
