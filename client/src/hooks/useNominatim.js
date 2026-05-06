@@ -1,37 +1,22 @@
 import { useState, useEffect } from 'react';
 
-// Bounding box de Bahía Blanca para priorizar resultados locales
-const BAHIA_VIEWBOX = '-62.40,-38.85,-62.10,-38.60';
+// Photon (komoot) — OSM con Elasticsearch, mejor búsqueda fuzzy que Nominatim
+// Completamente gratis, sin API key, sin cuenta
+const BAHIA_LAT = -38.7196;
+const BAHIA_LNG = -62.2724;
 
-async function buscarNominatim(q, extraParams = {}) {
-  const params = new URLSearchParams({
-    q,
-    format: 'json',
-    limit: 5,
-    addressdetails: 1,
-    namedetails: 1,
-    countrycodes: 'ar',
-    ...extraParams,
-  });
-  const res = await fetch(`https://nominatim.openstreetmap.org/search?${params}`, {
-    headers: { 'Accept-Language': 'es' },
-  });
-  return res.json();
-}
-
-function mapearResultado(r) {
+function mapearPhoton(r) {
+  const p = r.properties;
   return {
-    nombre: r.namedetails?.name || r.name || r.display_name.split(',')[0],
-    direccion: [r.address?.road, r.address?.house_number].filter(Boolean).join(' ')
-      || r.address?.suburb
-      || r.display_name.split(',').slice(0, 2).join(',').trim(),
-    lat: parseFloat(r.lat),
-    lng: parseFloat(r.lon),
-    place_id: r.place_id,
+    nombre: p.name || p.city || '',
+    direccion: [p.street, p.housenumber].filter(Boolean).join(' ') || p.district || '',
+    lat: r.geometry.coordinates[1],
+    lng: r.geometry.coordinates[0],
+    osm_id: r.properties.osm_id,
   };
 }
 
-export function useNominatim(query, ciudad = 'Bahía Blanca') {
+export function useNominatim(query) {
   const [resultados, setResultados] = useState([]);
   const [buscando, setBuscando] = useState(false);
 
@@ -41,22 +26,29 @@ export function useNominatim(query, ciudad = 'Bahía Blanca') {
     setBuscando(true);
     const t = setTimeout(async () => {
       try {
-        // Búsqueda 1: con ciudad en el viewbox de Bahía Blanca
-        const [r1, r2] = await Promise.all([
-          buscarNominatim(`${query}, ${ciudad}`, { viewbox: BAHIA_VIEWBOX, bounded: 0 }),
-          buscarNominatim(query, { viewbox: BAHIA_VIEWBOX, bounded: 1 }),
-        ]);
+        const params = new URLSearchParams({
+          q: query,
+          lat: BAHIA_LAT,
+          lon: BAHIA_LNG,
+          limit: 6,
+          lang: 'es',
+        });
+        const res = await fetch(`https://photon.komoot.io/api/?${params}`);
+        const data = await res.json();
 
-        // Combinar y deduplicar por place_id
-        const todos = [...r1, ...r2];
+        const resultados = data.features
+          .filter(r => r.properties.name) // solo resultados con nombre
+          .map(mapearPhoton);
+
+        // Deduplicar por osm_id
         const vistos = new Set();
-        const unicos = todos.filter(r => {
-          if (vistos.has(r.place_id)) return false;
-          vistos.add(r.place_id);
+        const unicos = resultados.filter(r => {
+          if (vistos.has(r.osm_id)) return false;
+          vistos.add(r.osm_id);
           return true;
         });
 
-        setResultados(unicos.slice(0, 6).map(mapearResultado));
+        setResultados(unicos);
       } catch {
         setResultados([]);
       } finally {
@@ -65,7 +57,7 @@ export function useNominatim(query, ciudad = 'Bahía Blanca') {
     }, 400);
 
     return () => clearTimeout(t);
-  }, [query, ciudad]);
+  }, [query]);
 
   return { resultados, buscando };
 }
