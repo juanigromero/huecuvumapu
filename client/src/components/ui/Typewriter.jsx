@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styles from './Typewriter.module.css';
 
-const PALABRAS = ['Personas', 'Artistas', 'Productores', 'Actores', 'Espacios', 'Eventos'];
+const PALABRAS = ['En comunidad', 'En el arte', 'En la fiesta', 'En el disfrute'];
 
 const VELOCIDAD_ESCRIBIR = 85;
 const VELOCIDAD_BORRAR   = 45;
@@ -41,7 +41,7 @@ export default function Typewriter() {
 
   return (
     <div className={styles.wrap}>
-      <span className={styles.estatico}>Interconectando</span>
+      <span className={styles.estatico}>Conectamos</span>
       <span className={styles.animado}>
         {texto}
         <span className={styles.cursor} />
