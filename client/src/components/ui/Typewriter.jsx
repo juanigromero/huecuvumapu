@@ -12,37 +12,32 @@ export default function Typewriter() {
   const [texto, setTexto] = useState('');
   const [indice, setIndice] = useState(0);
   const [escribiendo, setEscribiendo] = useState(true);
-  const [pausa, setPausa] = useState(false);
 
   useEffect(() => {
-    if (pausa) return;
-
     const palabra = PALABRAS[indice];
+    let t;
 
     if (escribiendo) {
       if (texto.length < palabra.length) {
-        const t = setTimeout(() => setTexto(palabra.slice(0, texto.length + 1)), VELOCIDAD_ESCRIBIR);
-        return () => clearTimeout(t);
+        t = setTimeout(() => setTexto(palabra.slice(0, texto.length + 1)), VELOCIDAD_ESCRIBIR);
       } else {
-        const t = setTimeout(() => { setPausa(false); setEscribiendo(false); }, PAUSA_COMPLETA);
-        setPausa(true);
-        return () => clearTimeout(t);
+        // Palabra completa — esperar y empezar a borrar
+        t = setTimeout(() => setEscribiendo(false), PAUSA_COMPLETA);
       }
     } else {
       if (texto.length > 0) {
-        const t = setTimeout(() => setTexto(texto.slice(0, -1)), VELOCIDAD_BORRAR);
-        return () => clearTimeout(t);
+        t = setTimeout(() => setTexto(t => t.slice(0, -1)), VELOCIDAD_BORRAR);
       } else {
-        const t = setTimeout(() => {
+        // Texto borrado — esperar y pasar a la siguiente palabra
+        t = setTimeout(() => {
           setIndice(i => (i + 1) % PALABRAS.length);
           setEscribiendo(true);
-          setPausa(false);
         }, PAUSA_BORRADA);
-        setPausa(true);
-        return () => clearTimeout(t);
       }
     }
-  }, [texto, indice, escribiendo, pausa]);
+
+    return () => clearTimeout(t);
+  }, [texto, indice, escribiendo]);
 
   return (
     <div className={styles.wrap}>
