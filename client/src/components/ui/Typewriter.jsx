@@ -41,7 +41,7 @@ export default function Typewriter() {
 
   return (
     <div className={styles.wrap}>
-      <span className={styles.estatico}>Conectamos</span>
+      <span className={styles.estatico}>Interconectando</span>
       <span className={styles.animado}>
         {texto}
         <span className={styles.cursor} />
