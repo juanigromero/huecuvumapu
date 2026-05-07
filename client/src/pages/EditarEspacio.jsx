@@ -4,8 +4,19 @@ import { useSelector } from 'react-redux';
 import Nav from '../components/ui/Nav';
 import SectionBar from '../components/ui/SectionBar';
 import ImageUpload from '../components/ui/ImageUpload';
+import MapaPicker from '../components/ui/MapaPicker';
 import { obtenerEspacio, actualizarEspacio } from '../services/espaciosService';
 import styles from './CrearEntidad.module.css';
+
+async function geocodificar(direccion, ciudad) {
+  const q = encodeURIComponent(`${direccion}, ${ciudad || 'Bahía Blanca'}, Argentina`);
+  const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
+    headers: { 'Accept-Language': 'es' },
+  });
+  const data = await res.json();
+  if (!data.length) return null;
+  return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+}
 
 export default function EditarEspacio() {
   const { handle } = useParams();
@@ -16,6 +27,7 @@ export default function EditarEspacio() {
   const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [geocodingStatus, setGeocodingStatus] = useState(null);
 
   useEffect(() => {
     obtenerEspacio(handle).then(e => {
@@ -25,11 +37,25 @@ export default function EditarEspacio() {
         descripcion: e.descripcion || '',
         direccion: e.direccion || '',
         ciudad: e.ciudad || '',
+        lat: e.lat || null,
+        lng: e.lng || null,
         avatar_url: e.avatar_url || '',
         cover_url: e.cover_url || '',
       });
     }).catch(() => setError('Espacio no encontrado'));
   }, [handle]);
+
+  async function handleDireccionBlur() {
+    if (!form.direccion.trim()) return;
+    setGeocodingStatus('buscando');
+    const coords = await geocodificar(form.direccion, form.ciudad);
+    if (coords) {
+      setForm(f => ({ ...f, lat: coords.lat, lng: coords.lng }));
+      setGeocodingStatus('ok');
+    } else {
+      setGeocodingStatus('no_encontrado');
+    }
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -77,8 +103,30 @@ export default function EditarEspacio() {
             </div>
             <div className={styles.field}>
               <label className={styles.label}>Dirección</label>
-              <input className={styles.input} value={form.direccion} onChange={e => setForm(f => ({ ...f, direccion: e.target.value }))} placeholder="Av. Colón 123" />
+              <input
+                className={styles.input}
+                value={form.direccion}
+                onChange={e => { setForm(f => ({ ...f, direccion: e.target.value, lat: null, lng: null })); setGeocodingStatus(null); }}
+                onBlur={handleDireccionBlur}
+                placeholder="Av. Colón 123"
+              />
+              {geocodingStatus === 'buscando' && <span className={styles.hint}>Buscando ubicación...</span>}
+              {geocodingStatus === 'ok' && <span className={styles.hintOk}>✓ Ubicación encontrada</span>}
+              {geocodingStatus === 'no_encontrado' && <span className={styles.hintWarn}>No se encontró. Marcá en el mapa.</span>}
             </div>
+          </div>
+
+          {/* MAPA DE UBICACIÓN */}
+          <div className={styles.field}>
+            <label className={styles.label}>
+              Ubicación en el mapa
+              {!form.lat && !form.lng && <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0, color: '#999' }}> — sin coordenadas, no aparece en el mapa</span>}
+            </label>
+            <MapaPicker
+              lat={form.lat}
+              lng={form.lng}
+              onChange={(lat, lng) => setForm(f => ({ ...f, lat, lng }))}
+            />
           </div>
 
           <div className={styles.field}>
