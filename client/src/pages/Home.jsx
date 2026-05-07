@@ -5,6 +5,7 @@ import MarqueeBar from '../components/ui/MarqueeBar';
 import SectionBar from '../components/ui/SectionBar';
 import EventoCard from '../components/eventos/EventoCard';
 import Tag from '../components/ui/Tag';
+import Typewriter from '../components/ui/Typewriter';
 import { listarEventos } from '../services/eventosService';
 import { generarSVG } from '../utils/svgAbstracto';
 import styles from './Home.module.css';
@@ -80,20 +81,25 @@ export default function Home() {
       <MarqueeBar />
 
       {/* HERO */}
-      {destacado && (
-        <section className={styles.hero}>
-          <div className={styles.heroTexto}>
-            <span className={styles.heroLabel}>destacado</span>
-            <div className={styles.heroTags}>
-              {destacado.categorias?.map(c => <Tag key={c} label={c} />)}
+      <section className={styles.hero}>
+        {/* TYPEWRITER — lado izquierdo */}
+        <div className={styles.heroTexto}>
+          <Typewriter />
+          {destacado && (
+            <div className={styles.heroDestacado}>
+              <span className={styles.heroLabel}>destacado</span>
+              <div className={styles.heroTags}>
+                {destacado.categorias?.map(c => <Tag key={c} label={c} />)}
+              </div>
+              <p className={styles.heroTituloEvento}>{destacado.titulo}</p>
+              <p className={styles.heroFecha}>{formatFechaHero(destacado.fecha)}{destacado.hora ? ` · ${destacado.hora.slice(0,5)}h` : ''}</p>
+              <Link to={`/eventos/${destacado.id}`} className={styles.heroBtn}>Ver evento</Link>
             </div>
-            <h1 className={styles.heroTitulo}>{destacado.titulo}</h1>
-            <p className={styles.heroFecha}>{formatFechaHero(destacado.fecha)}{destacado.hora ? ` · ${destacado.hora.slice(0,5)}h` : ''}</p>
-            {destacado.espacios && (
-              <p className={styles.heroLugar}>{destacado.espacios.nombre}{destacado.espacios.ciudad ? `, ${destacado.espacios.ciudad}` : ''}</p>
-            )}
-            <Link to={`/eventos/${destacado.id}`} className={styles.heroBtn}>Ver evento</Link>
-          </div>
+          )}
+        </div>
+
+        {/* IMAGEN — lado derecho */}
+        {destacado && (
           <div className={styles.heroImagen}>
             <img
               src={destacado.imagen_url || generarSVG(destacado.id, 800, 480)}
@@ -101,8 +107,8 @@ export default function Home() {
               className={styles.heroImg}
             />
           </div>
-        </section>
-      )}
+        )}
+      </section>
 
       {/* FILTROS */}
       <div className={styles.filtros}>

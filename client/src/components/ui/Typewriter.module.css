@@ -1,0 +1,38 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  line-height: 1.0;
+}
+
+.estatico {
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 700;
+  color: #111;
+  letter-spacing: -0.02em;
+  display: block;
+}
+
+.animado {
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 700;
+  color: #111;
+  letter-spacing: -0.02em;
+  display: block;
+  min-height: 1.1em;
+}
+
+.cursor {
+  display: inline-block;
+  width: 3px;
+  height: 0.85em;
+  background: #111;
+  margin-left: 3px;
+  vertical-align: middle;
+  animation: parpadeo 0.9s step-end infinite;
+}
+
+@keyframes parpadeo {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
