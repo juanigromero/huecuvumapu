@@ -336,11 +336,6 @@ export default function NuevoEvento() {
             <textarea className={styles.textarea} name="descripcion" value={form.descripcion} onChange={handleChange} placeholder="Contá de qué se trata el evento..." rows={4} />
           </div>
 
-          <div className={styles.field}>
-            <label className={styles.label}>Link externo (Eventbrite, Passline, etc.)</label>
-            <input className={styles.input} name="link_externo" value={form.link_externo} onChange={handleChange} placeholder="https://..." />
-          </div>
-
           {error && <p className={styles.error}>{error}</p>}
 
           <button type="submit" className={styles.btnSubmit} disabled={enviando || sinEntidades}>
