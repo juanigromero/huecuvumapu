@@ -96,6 +96,16 @@
 .item:hover { background: #eee8d8; }
 .item:last-child { border-bottom: none; }
 
+.itemClickeable { cursor: pointer; }
+
+.itemFlecha {
+  font-size: 13px;
+  color: #999;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding-left: 0.5rem;
+}
+
 .itemNoLeida { background: #fff; }
 
 .punto {

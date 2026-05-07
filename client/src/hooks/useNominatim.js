@@ -19,15 +19,16 @@ async function buscarNominatim(q, extraParams = {}) {
 }
 
 function mapear(r) {
-  return {
-    nombre: r.namedetails?.name || r.name || r.display_name.split(',')[0],
-    direccion: [r.address?.road, r.address?.house_number].filter(Boolean).join(' ')
-      || r.address?.suburb
-      || r.display_name.split(',').slice(0, 2).join(',').trim(),
-    lat: parseFloat(r.lat),
-    lng: parseFloat(r.lon),
-    place_id: r.place_id,
-  };
+  const nombreCrudo = r.namedetails?.name || r.name || '';
+  const esNumero = /^\d+$/.test(nombreCrudo.trim());
+  const direccion = [r.address?.road, r.address?.house_number].filter(Boolean).join(' ')
+    || r.address?.suburb
+    || r.display_name.split(',').slice(0, 2).join(',').trim();
+
+  // Si el "nombre" es solo un número (nro de casa), usamos la dirección como nombre
+  const nombre = nombreCrudo && !esNumero ? nombreCrudo : direccion;
+
+  return { nombre, direccion, lat: parseFloat(r.lat), lng: parseFloat(r.lon), place_id: r.place_id };
 }
 
 export function useNominatim(query, ciudad = 'Bahía Blanca') {

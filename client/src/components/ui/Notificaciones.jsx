@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { apiFetch } from '../../services/api';
 import styles from './Notificaciones.module.css';
 
@@ -13,6 +13,14 @@ const LABELS = {
   invitacion_recibida:   'Recibiste una invitación',
 };
 
+function getDestino(notif) {
+  const { tipo, referencia_id } = notif;
+  if (tipo === 'evento_pendiente') return '/admin';
+  if (referencia_id && ['evento_vinculado', 'confirmacion_recibida', 'evento_aprobado', 'nuevo_evento_seguido'].includes(tipo))
+    return `/eventos/${referencia_id}`;
+  return null;
+}
+
 function timeAgo(date) {
   const diff = (Date.now() - new Date(date)) / 1000;
   if (diff < 60) return 'ahora';
@@ -23,6 +31,7 @@ function timeAgo(date) {
 
 export default function Notificaciones() {
   const token = useSelector(s => s.auth.token);
+  const navigate = useNavigate();
   const [notifs, setNotifs] = useState([]);
   const [abierto, setAbierto] = useState(false);
   const ref = useRef(null);
@@ -46,13 +55,16 @@ export default function Notificaciones() {
 
   const noLeidas = notifs.filter(n => !n.leida).length;
 
-  async function handleAbrir() {
-    setAbierto(v => !v);
-  }
-
-  async function marcarLeida(id) {
-    await apiFetch(`/api/notificaciones/${id}/leer`, { method: 'PATCH' }, token);
-    setNotifs(ns => ns.map(n => n.id === id ? { ...n, leida: true } : n));
+  async function handleClick(n) {
+    if (!n.leida) {
+      await apiFetch(`/api/notificaciones/${n.id}/leer`, { method: 'PATCH' }, token);
+      setNotifs(ns => ns.map(x => x.id === n.id ? { ...x, leida: true } : x));
+    }
+    const destino = getDestino(n);
+    if (destino) {
+      setAbierto(false);
+      navigate(destino);
+    }
   }
 
   async function marcarTodas() {
@@ -64,7 +76,7 @@ export default function Notificaciones() {
 
   return (
     <div className={styles.wrap} ref={ref}>
-      <button className={styles.campana} onClick={handleAbrir} title="Notificaciones">
+      <button className={styles.campana} onClick={() => setAbierto(v => !v)} title="Notificaciones">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
           <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
@@ -85,19 +97,23 @@ export default function Notificaciones() {
             <p className={styles.vacio}>Sin notificaciones.</p>
           )}
 
-          {notifs.map(n => (
-            <div
-              key={n.id}
-              className={`${styles.item} ${!n.leida ? styles.itemNoLeida : ''}`}
-              onClick={() => !n.leida && marcarLeida(n.id)}
-            >
-              {!n.leida && <span className={styles.punto} />}
-              <div className={styles.itemTexto}>
-                <span className={styles.itemLabel}>{LABELS[n.tipo] || n.tipo}</span>
-                <span className={styles.itemTime}>{timeAgo(n.created_at)}</span>
+          {notifs.map(n => {
+            const destino = getDestino(n);
+            return (
+              <div
+                key={n.id}
+                className={`${styles.item} ${!n.leida ? styles.itemNoLeida : ''} ${destino ? styles.itemClickeable : ''}`}
+                onClick={() => handleClick(n)}
+              >
+                {!n.leida && <span className={styles.punto} />}
+                <div className={styles.itemTexto}>
+                  <span className={styles.itemLabel}>{LABELS[n.tipo] || n.tipo}</span>
+                  <span className={styles.itemTime}>{timeAgo(n.created_at)}</span>
+                </div>
+                {destino && <span className={styles.itemFlecha}>→</span>}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
