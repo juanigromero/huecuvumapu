@@ -73,25 +73,27 @@ function agruparPorUbicacion(eventos) {
 }
 
 function ConfirmacionBadge({ confirmaciones = [], iniciador }) {
-  // Busca la confirmación de la contraparte (si el evento lo cargó un proyecto, busca la del espacio y viceversa)
   const contraparte = iniciador === 'proyecto' ? 'espacio' : 'proyecto';
   const conf = confirmaciones.find(c => c.confirmador_tipo === contraparte);
-  if (!conf) return null; // sin espacio/proyecto registrado, no hay confirmación
+  if (!conf || conf.estado === 'pendiente') return null;
 
-  const map = {
-    confirmado:  { texto: 'confirmado', color: '#0a2a14', bg: '#c8f0d8' },
-    pendiente:   { texto: 'a confirmar', color: '#4a2a0a', bg: '#f5e8d0' },
-    rechazado:   { texto: 'no confirmado', color: '#4a0a0a', bg: '#f5d0d0' },
-  };
-  const { texto, color, bg } = map[conf.estado] || map.pendiente;
+  if (conf.estado === 'confirmado') return (
+    <span title="Confirmado por el espacio" style={{ display: 'inline-flex', alignItems: 'center' }}>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <circle cx="7" cy="7" r="7" fill="#111"/>
+        <polyline points="3.5,7 6,9.5 10.5,4.5" stroke="#f5f0e8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    </span>
+  );
 
   return (
-    <span style={{
-      fontSize: '10px', fontWeight: 700, letterSpacing: '0.06em',
-      textTransform: 'uppercase', padding: '2px 6px',
-      background: bg, color, border: `1px solid ${color}`,
-      alignSelf: 'flex-start', marginTop: '2px',
-    }}>{texto}</span>
+    <span title="No confirmado por el espacio" style={{ display: 'inline-flex', alignItems: 'center' }}>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <circle cx="7" cy="7" r="7" fill="#ccc"/>
+        <line x1="4.5" y1="4.5" x2="9.5" y2="9.5" stroke="#555" strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="9.5" y1="4.5" x2="4.5" y2="9.5" stroke="#555" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    </span>
   );
 }
 
@@ -168,8 +170,10 @@ export default function Mapa() {
                         {grupo.eventos.map(e => (
                           <Link key={e.id} to={`/eventos/${e.id}`} className={styles.popupEvento}>
                             <span className={styles.popupEventoFecha}>{formatFecha(e.fecha)}</span>
-                            <span className={styles.popupEventoTitulo}>{e.titulo}</span>
-                            <ConfirmacionBadge confirmaciones={e.confirmaciones} iniciador={e.iniciador} />
+                            <span className={styles.popupEventoTitulo} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                              {e.titulo}
+                              <ConfirmacionBadge confirmaciones={e.confirmaciones} iniciador={e.iniciador} />
+                            </span>
                           </Link>
                         ))}
                       </div>
