@@ -84,6 +84,9 @@ export default function EventoDetalle() {
   const proyecto = evento.proyectos;
   const lat = espacio?.lat || evento.lat;
   const lng = espacio?.lng || evento.lng;
+  const espacioConfirmado = evento.confirmaciones?.some(
+    c => c.confirmador_tipo === 'espacio' && c.estado === 'confirmado'
+  );
 
   return (
     <div className={styles.page}>
@@ -157,7 +160,17 @@ export default function EventoDetalle() {
             <span className={styles.sideLabel}>Dónde</span>
             {espacio ? (
               <Link to={`/e/${espacio.handle}`} className={styles.sideLugar}>
-                {espacio.nombre}
+                <span className={styles.sideLugarNombre}>
+                  {espacio.nombre}
+                  {espacioConfirmado && (
+                    <span className={styles.checkConfirmado} title="Confirmado por el espacio">
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <circle cx="7" cy="7" r="7" fill="#111"/>
+                        <polyline points="3.5,7 6,9.5 10.5,4.5" stroke="#f5f0e8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </span>
+                  )}
+                </span>
                 {espacio.ciudad && <span className={styles.sideCiudad}>{espacio.ciudad}</span>}
               </Link>
             ) : (
