@@ -51,6 +51,10 @@ export default function CrearEspacio() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (!form.lat || !form.lng) {
+      setError('El espacio necesita una ubicación en el mapa para poder crearse.');
+      return;
+    }
     setLoading(true);
     setError(null);
     try {

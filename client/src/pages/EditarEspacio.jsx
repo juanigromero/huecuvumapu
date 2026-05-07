@@ -59,6 +59,10 @@ export default function EditarEspacio() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (!form.lat || !form.lng) {
+      setError('El espacio necesita una ubicación en el mapa antes de guardar.');
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
