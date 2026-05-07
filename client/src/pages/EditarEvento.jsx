@@ -4,6 +4,9 @@ import { useSelector } from 'react-redux';
 import Nav from '../components/ui/Nav';
 import SectionBar from '../components/ui/SectionBar';
 import ImageUpload from '../components/ui/ImageUpload';
+import MapaPicker from '../components/ui/MapaPicker';
+import { useNominatim } from '../hooks/useNominatim';
+import { buscarEspacios } from '../services/espaciosService';
 import { obtenerEvento, actualizarEvento, cancelarEvento } from '../services/eventosService';
 import styles from './NuevoEvento.module.css';
 
@@ -20,6 +23,12 @@ export default function EditarEvento() {
   const [error, setError] = useState(null);
   const [confirmandoCancelar, setConfirmandoCancelar] = useState(false);
 
+  // Estado del buscador de espacio
+  const [busqueda, setBusqueda] = useState('');
+  const [seleccion, setSeleccion] = useState(null);
+  const [espaciosRegistrados, setEspaciosRegistrados] = useState([]);
+  const { resultados: sugerenciasNominatim, buscando: buscandoNominatim, terminado: busquedaTerminada } = useNominatim(seleccion ? '' : busqueda);
+
   useEffect(() => {
     obtenerEvento(id).then(e => {
       setEvento(e);
@@ -32,10 +41,49 @@ export default function EditarEvento() {
         link_externo: e.link_externo || '',
         info_entradas: e.info_entradas || '',
         imagen_url: e.imagen_url || '',
+        espacio_id: e.espacio_id || '',
+        espacio_texto: e.espacio_texto || '',
+        lat: e.lat || null,
+        lng: e.lng || null,
         categorias: e.categorias || [],
       });
+      // Pre-cargar selección actual
+      if (e.espacios) {
+        setSeleccion({ tipo: 'registrado', id: e.espacio_id, nombre: e.espacios.nombre });
+        setBusqueda(e.espacios.nombre);
+      } else if (e.espacio_texto) {
+        setSeleccion({ tipo: 'lugar', nombre: e.espacio_texto });
+        setBusqueda(e.espacio_texto);
+      }
     }).catch(() => setError('Evento no encontrado'));
   }, [id]);
+
+  useEffect(() => {
+    if (!busqueda || busqueda.length < 2 || seleccion) { setEspaciosRegistrados([]); return; }
+    buscarEspacios(busqueda).then(setEspaciosRegistrados);
+  }, [busqueda, seleccion]);
+
+  const hayResultados = espaciosRegistrados.length > 0 || sugerenciasNominatim.length > 0;
+
+  function elegirEspacioRegistrado(esp) {
+    setSeleccion({ tipo: 'registrado', ...esp });
+    setBusqueda(esp.nombre);
+    setEspaciosRegistrados([]);
+    setForm(f => ({ ...f, espacio_id: esp.id, espacio_texto: '', lat: null, lng: null }));
+  }
+
+  function elegirLugarNominatim(lugar) {
+    setSeleccion({ tipo: 'lugar', ...lugar });
+    setBusqueda(lugar.nombre);
+    setEspaciosRegistrados([]);
+    setForm(f => ({ ...f, espacio_id: '', espacio_texto: lugar.nombre, lat: lugar.lat, lng: lugar.lng }));
+  }
+
+  function limpiarSeleccion() {
+    setSeleccion(null);
+    setBusqueda('');
+    setForm(f => ({ ...f, espacio_id: '', espacio_texto: '', lat: null, lng: null }));
+  }
 
   function toggleCategoria(c) {
     setForm(f => ({
@@ -79,13 +127,7 @@ export default function EditarEvento() {
 
           <div className={styles.field}>
             <label className={styles.label}>Imagen del evento</label>
-            <ImageUpload
-              valor={form.imagen_url}
-              onChange={url => setForm(f => ({ ...f, imagen_url: url }))}
-              carpeta="eventos"
-              tipo="cover"
-              label="+ imagen"
-            />
+            <ImageUpload valor={form.imagen_url} onChange={url => setForm(f => ({ ...f, imagen_url: url }))} carpeta="eventos" tipo="cover" label="+ imagen" />
           </div>
 
           <div className={styles.field}>
@@ -115,6 +157,70 @@ export default function EditarEvento() {
             </div>
           </div>
 
+          {/* LUGAR */}
+          <div className={styles.field}>
+            <label className={styles.label}>Espacio donde se realiza</label>
+            {seleccion ? (
+              <>
+                <div className={seleccion.tipo === 'registrado' ? styles.seleccionRegistrado : styles.seleccionLugar}>
+                  <div className={styles.seleccionInfo}>
+                    {seleccion.tipo === 'registrado' && <span className={styles.seleccionBadge}>en huecuvumapu</span>}
+                    {seleccion.tipo === 'lugar' && <span className={styles.seleccionBadgeLugar}>ubicación</span>}
+                    <strong className={styles.seleccionNombre}>{seleccion.nombre}</strong>
+                    {seleccion.tipo === 'registrado' && <span className={styles.seleccionHint}>recibirá una solicitud de confirmación</span>}
+                  </div>
+                  <button type="button" className={styles.seleccionCambiar} onClick={limpiarSeleccion}>cambiar</button>
+                </div>
+                {seleccion.tipo === 'lugar' && form.lat && form.lng && (
+                  <MapaPicker lat={form.lat} lng={form.lng} onChange={(lat, lng) => setForm(f => ({ ...f, lat, lng }))} />
+                )}
+              </>
+            ) : (
+              <>
+                <div className={styles.buscador}>
+                  <input
+                    className={styles.input}
+                    placeholder="Escribí el nombre del lugar..."
+                    value={busqueda}
+                    onChange={e => setBusqueda(e.target.value)}
+                    autoComplete="off"
+                  />
+                  {busqueda.length >= 2 && buscandoNominatim && <span className={styles.buscandoIndicador}>buscando...</span>}
+                  {hayResultados && (
+                    <div className={styles.dropdown}>
+                      {espaciosRegistrados.length > 0 && (
+                        <>
+                          <div className={styles.dropdownSeccion}>en huecuvumapu</div>
+                          {espaciosRegistrados.map(e => (
+                            <button key={e.id} type="button" className={`${styles.dropdownItem} ${styles.dropdownItemRegistrado}`} onClick={() => elegirEspacioRegistrado(e)}>
+                              <strong>{e.nombre}</strong>{e.ciudad && <span> · {e.ciudad}</span>}
+                            </button>
+                          ))}
+                        </>
+                      )}
+                      {sugerenciasNominatim.length > 0 && (
+                        <>
+                          <div className={styles.dropdownSeccion}>lugares</div>
+                          {sugerenciasNominatim.map((l, i) => (
+                            <button key={i} type="button" className={styles.dropdownItem} onClick={() => elegirLugarNominatim(l)}>
+                              <strong>{l.nombre}</strong>{l.direccion && <span className={styles.dropdownDireccion}> · {l.direccion}</span>}
+                            </button>
+                          ))}
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+                {busquedaTerminada && sugerenciasNominatim.length === 0 && espaciosRegistrados.length === 0 && (
+                  <div className={styles.sinResultados}>
+                    <p className={styles.sinResultadosTexto}>No encontramos ese lugar. Marcá la ubicación en el mapa o buscá por dirección.</p>
+                    <MapaPicker lat={form.lat} lng={form.lng} onChange={(lat, lng) => setForm(f => ({ ...f, lat, lng, espacio_texto: busqueda }))} />
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+
           <fieldset className={styles.fieldset}>
             <legend className={styles.legend}>Entrada</legend>
             <div className={styles.entradaOpciones}>
@@ -125,24 +231,24 @@ export default function EditarEvento() {
                 </label>
               ))}
             </div>
+            {form.entrada === 'pago' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.75rem' }}>
+                <div className={styles.field}>
+                  <label className={styles.label}>Link de entradas</label>
+                  <input className={styles.input} value={form.link_externo} onChange={e => setForm(f => ({ ...f, link_externo: e.target.value }))} placeholder="https://passline.com/..." />
+                </div>
+                <div className={styles.field}>
+                  <label className={styles.label}>¿Cómo conseguirlas? <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>(si no hay link)</span></label>
+                  <textarea className={styles.textarea} value={form.info_entradas} onChange={e => setForm(f => ({ ...f, info_entradas: e.target.value }))} rows={2} placeholder="Ej: Escribinos al 291 555-1234 o pasá por Av. Colón 123" />
+                </div>
+              </div>
+            )}
           </fieldset>
 
           <div className={styles.field}>
             <label className={styles.label}>Descripción</label>
             <textarea className={styles.textarea} value={form.descripcion} onChange={e => setForm(f => ({ ...f, descripcion: e.target.value }))} rows={4} placeholder="Contá de qué se trata..." />
           </div>
-
-          <div className={styles.field}>
-            <label className={styles.label}>Link de entradas</label>
-            <input className={styles.input} value={form.link_externo} onChange={e => setForm(f => ({ ...f, link_externo: e.target.value }))} placeholder="https://passline.com/..." />
-          </div>
-
-          {form.entrada === 'pago' && (
-            <div className={styles.field}>
-              <label className={styles.label}>¿Cómo conseguirlas? <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>(si no hay link)</span></label>
-              <textarea className={styles.textarea} value={form.info_entradas} onChange={e => setForm(f => ({ ...f, info_entradas: e.target.value }))} rows={2} placeholder="Ej: Escribinos al 291 555-1234 o pasá por Av. Colón 123" />
-            </div>
-          )}
 
           {error && <p className={styles.error}>{error}</p>}
 
@@ -153,11 +259,8 @@ export default function EditarEvento() {
               </button>
               <Link to={`/eventos/${id}`} className={styles.hint}>Cancelar</Link>
             </div>
-
             {!confirmandoCancelar ? (
-              <button type="button" className={styles.btnCancelarEvento} onClick={() => setConfirmandoCancelar(true)}>
-                Cancelar evento
-              </button>
+              <button type="button" className={styles.btnCancelarEvento} onClick={() => setConfirmandoCancelar(true)}>Cancelar evento</button>
             ) : (
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <span style={{ fontSize: '13px', color: '#555' }}>¿Seguro?</span>
