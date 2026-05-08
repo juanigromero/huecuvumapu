@@ -80,26 +80,32 @@ export default function Home() {
       <Nav />
       <MarqueeBar />
 
-      {/* HERO */}
-      <section className={styles.hero}>
-        {/* TYPEWRITER — lado izquierdo */}
-        <div className={styles.heroTexto}>
-          <Typewriter />
-          {destacado && (
-            <div className={styles.heroDestacado}>
-              <span className={styles.heroLabel}>destacado</span>
-              <div className={styles.heroTags}>
-                {destacado.categorias?.map(c => <Tag key={c} label={c} />)}
-              </div>
-              <p className={styles.heroTituloEvento}>{destacado.titulo}</p>
-              <p className={styles.heroFecha}>{formatFechaHero(destacado.fecha)}{destacado.hora ? ` · ${destacado.hora.slice(0,5)}h` : ''}</p>
-              <Link to={`/eventos/${destacado.id}`} className={styles.heroBtn}>Ver evento</Link>
-            </div>
-          )}
-        </div>
+      {/* SECCIÓN TYPEWRITER — con video de fondo cuando esté disponible */}
+      <section className={styles.heroTypewriter}>
+        {/* Video de fondo — descomentar cuando haya video
+        <video className={styles.videoBg} autoPlay muted loop playsInline>
+          <source src="URL_DEL_VIDEO.mp4" type="video/mp4" />
+        </video>
+        <div className={styles.videoOverlay} />
+        */}
+        <Typewriter />
+      </section>
 
-        {/* IMAGEN — lado derecho */}
-        {destacado && (
+      {/* SECCIÓN DESTACADO */}
+      {destacado && (
+        <section className={styles.hero}>
+          <div className={styles.heroTexto}>
+            <span className={styles.heroLabel}>destacado</span>
+            <div className={styles.heroTags}>
+              {destacado.categorias?.map(c => <Tag key={c} label={c} />)}
+            </div>
+            <h2 className={styles.heroTituloEvento}>{destacado.titulo}</h2>
+            <p className={styles.heroFecha}>{formatFechaHero(destacado.fecha)}{destacado.hora ? ` · ${destacado.hora.slice(0,5)}h` : ''}</p>
+            {destacado.espacios && (
+              <p className={styles.heroLugar}>{destacado.espacios.nombre}{destacado.espacios.ciudad ? `, ${destacado.espacios.ciudad}` : ''}</p>
+            )}
+            <Link to={`/eventos/${destacado.id}`} className={styles.heroBtn}>Ver evento</Link>
+          </div>
           <div className={styles.heroImagen}>
             <img
               src={destacado.imagen_url || generarSVG(destacado.id, 800, 480)}
@@ -107,8 +113,8 @@ export default function Home() {
               className={styles.heroImg}
             />
           </div>
-        )}
-      </section>
+        </section>
+      )}
 
       {/* FILTROS */}
       <div className={styles.filtros}>
