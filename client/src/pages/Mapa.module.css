@@ -150,7 +150,7 @@
 }
 
 .grupoItem:hover { background: #eee8d8; }
-.grupoItemActivo { background: #c8f0d8; }
+.grupoItemActivo { background: #e8e0d0; }
 
 .grupoHeader {
   display: flex;
