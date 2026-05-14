@@ -213,7 +213,10 @@ export default function Mapa() {
                         {e.categorias?.map(c => <Tag key={c} label={c} />)}
                       </div>
                     </div>
-                    <span className={styles.eventoTitulo}>{e.titulo}</span>
+                    <span className={styles.eventoTitulo} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      {e.titulo}
+                      <ConfirmacionBadge confirmaciones={e.confirmaciones} iniciador={e.iniciador} />
+                    </span>
                   </div>
                 ))}
               </div>
